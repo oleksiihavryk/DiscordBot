@@ -1,0 +1,57 @@
+﻿@using System.Collections.Immutable
+@using Oleksii_Havryk.DiscordBot.Core
+@model LoggerMessagesViewModel
+<table>
+    <caption>Latest messages:</caption>
+    <thead>
+    <tr>
+        <td>Time</td>
+        <td>Severity</td>
+        <td>Source</td>
+        <td>Message</td>
+    </tr>
+    </thead>
+    <tbody>
+    @if (@Model.LatestMessages.Any()) {
+    @foreach (var m in @Model.LatestMessages
+        .ToImmutableSortedSet(comparer: ContainmentLoggerMessage.CompareByTime))
+    {
+        <tr>
+            <td>@m.AddTime</td>
+            <td>@m.LogMessage.Severity</td>
+            <td>@m.LogMessage.Source</td>
+            <td>@m.LogMessage.Message</td>
+        </tr>
+    }
+    } else {
+    <tr><td>LogMessages of logger is empty!</td></tr>
+    }
+    </tbody>
+</table>
+<table>
+    <caption>Other messages:</caption>
+    <thead>
+    <tr>
+        <td>Time</td>
+        <td>Severity</td>
+        <td>Source</td>
+        <td>Message</td>
+    </tr>
+    </thead>
+    <tbody>
+    @if (@Model.LatestMessages.Any()) {
+    @foreach (var m in @Model.OtherMessages
+        .ToImmutableSortedSet(comparer: ContainmentLoggerMessage.CompareByTime))
+    {
+        <tr>
+            <td>@m.AddTime</td>
+            <td>@m.LogMessage.Severity</td>
+            <td>@m.LogMessage.Source</td>
+            <td>@m.LogMessage.Message</td>
+        </tr>
+    }
+    } else {
+    <tr><td>LogMessages of logger is empty!</td></tr>
+    }
+    </tbody>
+</table>

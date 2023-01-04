@@ -12,13 +12,16 @@ public class BotLoggingService : IBotLoggingService
 {
     private readonly DiscordSocketClient _client;
     private readonly ILogger<BotLoggingService> _logger;
+    private readonly ILoggerMessagesFolder _loggerMessagesFolder;
 
     public BotLoggingService(
         DiscordSocketClient client,
-        ILogger<BotLoggingService> logger)
+        ILogger<BotLoggingService> logger, 
+        ILoggerMessagesFolder loggerMessagesFolder)
     {
         _client = client;
         _logger = logger;
+        _loggerMessagesFolder = loggerMessagesFolder;
     }
 
     public async Task BeginHandleAsync()
@@ -47,7 +50,7 @@ public class BotLoggingService : IBotLoggingService
                                         "Command context:\n" +
                                         $"User: {commandException.Context.User.Username},\n" +
                                         $"Command: {commandException.Command.Name},\n" +
-                                        $"Exception message: {commandException.Message},\n" +
+                                        $"Exception LogMessage: {commandException.Message},\n" +
                                         $"Exception stack trace: {commandException.StackTrace}");
                     break;
                 }
@@ -76,6 +79,6 @@ public class BotLoggingService : IBotLoggingService
                 message: $"[{message.Source}] {message.Message}");
         }
 
-        await Task.CompletedTask;
+        await _loggerMessagesFolder.AddToLatestAsync(message);
     }
 }

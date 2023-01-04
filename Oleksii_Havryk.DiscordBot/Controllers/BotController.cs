@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Oleksii_Havryk.DiscordBot.Core;
+using Oleksii_Havryk.DiscordBot.Core.Interfaces;
+using Oleksii_Havryk.DiscordBot.ViewModels;
 
 namespace Oleksii_Havryk.DiscordBot.Controllers;
 /// <summary>
@@ -10,10 +12,14 @@ namespace Oleksii_Havryk.DiscordBot.Controllers;
 public class BotController : Controller
 {
     private readonly Bot _bot;
+    private readonly ILoggerMessagesFolder _loggerMessagesFolder;
 
-    public BotController(Bot bot)
+    public BotController(
+        Bot bot,
+        ILoggerMessagesFolder loggerMessagesFolder)
     {
         _bot = bot;
+        _loggerMessagesFolder = loggerMessagesFolder;
     }
 
     //endpoints
@@ -32,8 +38,19 @@ public class BotController : Controller
         await _bot.StopAsync();
         return View();
     }
-    public ViewResult LoggerMessages()
+    [Route("[action]")]
+    public async Task<ViewResult> Messages()
     {
-        throw new NotImplementedException();
+        var latestMessages = _loggerMessagesFolder
+            .LatestMessages
+            .ToArray();
+        var otherMessages = _loggerMessagesFolder
+            .OtherMessages
+            .ToArray();
+        await _loggerMessagesFolder.UpdateMessagesAsync();
+
+        return View(model: new LoggerMessagesViewModel(
+            otherMessages,
+            latestMessages));
     }
 }

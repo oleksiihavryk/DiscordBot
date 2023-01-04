@@ -36,7 +36,7 @@ public static class ConfigurationExtensions
         services.AddSingleton<DiscordSocketClient>();
         services.AddSingleton<InteractionService>();
 
-        //Bot inner services.
+        //Bot inner services helpers.
         services.AddSingleton<ILanguageFilter, UkrainianRussianLanguageFilter>(sp =>
         {
             var newServiceProvider = sp.CreateScope().ServiceProvider;
@@ -48,6 +48,9 @@ public static class ConfigurationExtensions
                     .GetSection("Bot")
                     .GetValue<string>("RussianDictionaryApiKey") ?? string.Empty);
         });
+        services.AddSingleton<ILoggerMessagesFolder, LoggerMessagesFolder>();
+
+        //Bot inner services.
         services.AddSingleton<ILanguageFilterService, LanguageFilterService>();
         services.AddSingleton<IBotLoggingService, BotLoggingService>();
         services.AddSingleton<ICommandHandlerService, CommandHandlerService>();

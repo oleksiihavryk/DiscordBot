@@ -1,0 +1,52 @@
+﻿using Discord;
+using Oleksii_Havryk.DiscordBot.Core.Interfaces;
+
+namespace Oleksii_Havryk.DiscordBot.Core;
+
+/// <summary>
+///     Logger message folder interface implementation.
+/// </summary>
+public class LoggerMessagesFolder : ILoggerMessagesFolder
+{
+    private readonly List<ContainmentLoggerMessage> _messages = 
+        new List<ContainmentLoggerMessage>();
+
+    public IEnumerable<ContainmentLoggerMessage> OtherMessages => 
+        _messages.Where(
+            m => m.IsRead);
+    public IEnumerable<ContainmentLoggerMessage> LatestMessages => 
+        _messages.Where(
+            m => !m.IsRead);
+
+    public TimeSpan ExpireTime { get; set; } = TimeSpan.FromDays(1);
+
+    public async Task AddToLatestAsync(LogMessage message)
+    {
+        _messages.Add(item: new ContainmentLoggerMessage(
+            message,
+            addTime: DateTime.Now));
+
+        await Task.CompletedTask;
+    }
+    public async Task UpdateMessagesAsync()
+    {
+        var latest = LatestMessages.ToArray();
+        var all = _messages.ToArray();
+        var now = DateTime.Now;
+
+        if (latest.Length != 0)
+            for (int i = latest.Length; i-- > 0;) latest[i].IsRead = true;
+
+        if (all.Length != 0)
+        {
+            for (int i = all.Length; i-- > 0;)
+            {
+                var message = all[i];
+                if (now - message.AddTime >= ExpireTime)
+                    _messages.Remove(message);
+            }
+        }
+
+        await Task.CompletedTask;
+    }
+}
