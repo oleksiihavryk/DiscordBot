@@ -13,18 +13,18 @@
     </thead>
     <tbody>
     @if (@Model.LatestMessages.Any()) {
-    @foreach (var m in @Model.LatestMessages
-        .ToImmutableSortedSet(comparer: ContainmentLoggerMessage.CompareByTime))
-    {
-        <tr>
-            <td>@m.AddTime</td>
-            <td>@m.LogMessage.Severity</td>
-            <td>@m.LogMessage.Source</td>
-            <td>@m.LogMessage.Message</td>
-        </tr>
-    }
+        @foreach (var m in @Model.LatestMessages
+            .ToImmutableSortedSet(comparer: ContainmentLoggerMessage.CompareByTime))
+        {
+            <tr>
+                <td>@m.AddTime</td>
+                <td>@m.LogMessage.Severity</td>
+                <td>@m.LogMessage.Source</td>
+                <td>@m.LogMessage.Message</td>
+            </tr>
+        }
     } else {
-    <tr><td>LogMessages of logger is empty!</td></tr>
+    <tr><td>There is not latest messages!</td></tr>
     }
     </tbody>
 </table>
@@ -39,19 +39,19 @@
     </tr>
     </thead>
     <tbody>
-    @if (@Model.LatestMessages.Any()) {
-    @foreach (var m in @Model.OtherMessages
-        .ToImmutableSortedSet(comparer: ContainmentLoggerMessage.CompareByTime))
-    {
-        <tr>
-            <td>@m.AddTime</td>
-            <td>@m.LogMessage.Severity</td>
-            <td>@m.LogMessage.Source</td>
-            <td>@m.LogMessage.Message</td>
-        </tr>
-    }
+    @if (@Model.OtherMessages.Any()) {
+        @foreach (var m in @Model.OtherMessages
+            .ToImmutableSortedSet(comparer: ContainmentLoggerMessage.CompareByTime))
+        {
+            <tr>
+                <td>@m.AddTime</td>
+                <td>@m.LogMessage.Severity</td>
+                <td>@m.LogMessage.Source</td>
+                <td>@m.LogMessage.Message</td>
+            </tr>
+        }
     } else {
-    <tr><td>LogMessages of logger is empty!</td></tr>
+    <tr><td>There is not other messages!</td></tr>
     }
     </tbody>
 </table>
