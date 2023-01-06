@@ -4,13 +4,13 @@ namespace Oleksii_Havryk.DiscordBot.Core;
 /// <summary>
 ///     Containment logger LogMessage.
 /// </summary>
-public class ContainmentLoggerMessage 
+public class LoggerMessage 
 {
     public LogMessage LogMessage { get; set; }
     public DateTime AddTime { get; set; }
     public bool IsRead { get; set; } = false;
 
-    public ContainmentLoggerMessage(
+    public LoggerMessage(
         LogMessage logMessage, 
         DateTime addTime)
     {
@@ -18,27 +18,27 @@ public class ContainmentLoggerMessage
         AddTime = addTime;
     }
 
-    public static IComparer<ContainmentLoggerMessage> CompareByTime => 
+    public static IComparer<LoggerMessage> CompareByTime => 
         ContainmentLoggerMessageByTimeComparer.Default;
 
-    public class ContainmentLoggerMessageByTimeComparer : IComparer<ContainmentLoggerMessage>
+    public class ContainmentLoggerMessageByTimeComparer : IComparer<LoggerMessage>
     {
-        public int Compare(ContainmentLoggerMessage? x, ContainmentLoggerMessage? y)
+        public int Compare(LoggerMessage? x, LoggerMessage? y)
         {
             if (x == null && y == null)
                 return 0;
             if (x == null && y != null)
-                return 1;
-            if (x != null && y == null)
                 return -1;
+            if (x != null && y == null)
+                return 1;
 
-            return x.AddTime.CompareTo(y.AddTime);
+            return -(x.AddTime.CompareTo(y.AddTime));
         }
 
         private ContainmentLoggerMessageByTimeComparer()
         {
         }
 
-        public static IComparer<ContainmentLoggerMessage> Default => new ContainmentLoggerMessageByTimeComparer();
+        public static IComparer<LoggerMessage> Default => new ContainmentLoggerMessageByTimeComparer();
     }
 }

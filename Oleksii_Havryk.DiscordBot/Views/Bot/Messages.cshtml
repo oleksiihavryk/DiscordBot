@@ -14,7 +14,7 @@
     <tbody>
     @if (@Model.LatestMessages.Any()) {
         @foreach (var m in @Model.LatestMessages
-            .ToImmutableSortedSet(comparer: ContainmentLoggerMessage.CompareByTime))
+            .ToImmutableSortedSet(comparer: LoggerMessage.CompareByTime))
         {
             <tr>
                 <td>@m.AddTime</td>
@@ -24,7 +24,7 @@
             </tr>
         }
     } else {
-    <tr><td>There is not latest messages!</td></tr>
+            <tr><td colspan="4">There is not latest messages!</td></tr>
     }
     </tbody>
 </table>
@@ -41,7 +41,7 @@
     <tbody>
     @if (@Model.OtherMessages.Any()) {
         @foreach (var m in @Model.OtherMessages
-            .ToImmutableSortedSet(comparer: ContainmentLoggerMessage.CompareByTime))
+            .ToImmutableSortedSet(comparer: LoggerMessage.CompareByTime))
         {
             <tr>
                 <td>@m.AddTime</td>
@@ -51,7 +51,7 @@
             </tr>
         }
     } else {
-    <tr><td>There is not other messages!</td></tr>
+            <tr><td colspan="4">There is not other messages!</td></tr>
     }
     </tbody>
 </table>

@@ -8,13 +8,13 @@ namespace Oleksii_Havryk.DiscordBot.Core;
 /// </summary>
 public class LoggerMessagesFolder : ILoggerMessagesFolder
 {
-    private readonly List<ContainmentLoggerMessage> _messages = 
-        new List<ContainmentLoggerMessage>();
+    private readonly List<LoggerMessage> _messages = 
+        new List<LoggerMessage>();
 
-    public IEnumerable<ContainmentLoggerMessage> OtherMessages => 
+    public IEnumerable<LoggerMessage> OtherMessages => 
         _messages.Where(
             m => m.IsRead);
-    public IEnumerable<ContainmentLoggerMessage> LatestMessages => 
+    public IEnumerable<LoggerMessage> LatestMessages => 
         _messages.Where(
             m => !m.IsRead);
 
@@ -22,7 +22,7 @@ public class LoggerMessagesFolder : ILoggerMessagesFolder
 
     public async Task AddToLatestAsync(LogMessage message)
     {
-        _messages.Add(item: new ContainmentLoggerMessage(
+        _messages.Add(item: new LoggerMessage(
             message,
             addTime: DateTime.Now));
 

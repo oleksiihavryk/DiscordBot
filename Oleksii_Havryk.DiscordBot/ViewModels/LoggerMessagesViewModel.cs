@@ -7,12 +7,12 @@ namespace Oleksii_Havryk.DiscordBot.ViewModels;
 /// </summary>
 public class LoggerMessagesViewModel
 {
-    public IEnumerable<ContainmentLoggerMessage> OtherMessages { get; set; }
-    public IEnumerable<ContainmentLoggerMessage> LatestMessages { get; set; }
+    public IEnumerable<Core.LoggerMessage> OtherMessages { get; set; }
+    public IEnumerable<Core.LoggerMessage> LatestMessages { get; set; }
 
     public LoggerMessagesViewModel(
-        IEnumerable<ContainmentLoggerMessage> otherMessages, 
-        IEnumerable<ContainmentLoggerMessage> latestMessages)
+        IEnumerable<Core.LoggerMessage> otherMessages, 
+        IEnumerable<Core.LoggerMessage> latestMessages)
     {
         OtherMessages = otherMessages;
         LatestMessages = latestMessages;

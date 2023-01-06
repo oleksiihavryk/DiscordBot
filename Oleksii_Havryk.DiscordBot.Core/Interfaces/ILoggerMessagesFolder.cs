@@ -7,8 +7,8 @@ namespace Oleksii_Havryk.DiscordBot.Core.Interfaces;
 /// </summary>
 public interface ILoggerMessagesFolder
 {
-    IEnumerable<ContainmentLoggerMessage> OtherMessages { get; }
-    IEnumerable<ContainmentLoggerMessage> LatestMessages { get; }
+    IEnumerable<LoggerMessage> OtherMessages { get; }
+    IEnumerable<LoggerMessage> LatestMessages { get; }
 
     Task AddToLatestAsync(LogMessage message);
     Task UpdateMessagesAsync();

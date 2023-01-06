@@ -33,8 +33,8 @@ public static class ConfigurationExtensions
 
         client.Ready += async () => await interactionService.RegisterCommandsGloballyAsync();
 
-        services.AddSingleton<DiscordSocketClient>();
-        services.AddSingleton<InteractionService>();
+        services.AddSingleton<DiscordSocketClient>(client);
+        services.AddSingleton<InteractionService>(interactionService);
 
         //Bot inner services helpers.
         services.AddSingleton<ILanguageFilter, UkrainianRussianLanguageFilter>(sp =>

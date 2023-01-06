@@ -8,7 +8,6 @@ namespace Oleksii_Havryk.DiscordBot.Controllers;
 ///     Bot controller.
 /// </summary>
 [Controller]
-[Route("[controller]")]
 public class BotController : Controller
 {
     private readonly Bot _bot;
