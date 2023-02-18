@@ -47,11 +47,11 @@ public class BotLoggingService : IBotLoggingService
                 case CommandException commandException:
                 {
                     _logger.LogError(message: $"[{message.Source}] {message.Message}\n" +
-                                        "Command context:\n" +
-                                        $"User: {commandException.Context.User.Username},\n" +
-                                        $"Command: {commandException.Command.Name},\n" +
-                                        $"Exception LogMessage: {commandException.Message},\n" +
-                                        $"Exception stack trace: {commandException.StackTrace}");
+                                              "Command context:\n" +
+                                              $"User: {commandException.Context.User.Username},\n" +
+                                              $"Command: {commandException.Command.Name},\n" +
+                                              $"Exception LogMessage: {commandException.Message},\n" +
+                                              $"Exception stack trace: {commandException.StackTrace}");
                     break;
                 }
                 default:

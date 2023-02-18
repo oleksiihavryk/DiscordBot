@@ -35,6 +35,7 @@ public sealed class Bot
         await _commandHandlerService.BeginHandleAsync();
         await _languageFilterService.BeginHandleAsync();
         await _botLoggingService.BeginHandleAsync();
+
         await _client.LoginAsync(
             tokenType: TokenType.Bot,
             token: _tokenOptions.Value.TokenValue);
@@ -44,6 +45,7 @@ public sealed class Bot
     {
         await _client.StopAsync();
         await _client.LogoutAsync();
+
         await _commandHandlerService.EndHandleAsync();
         await _languageFilterService.EndHandleAsync();
         await _botLoggingService.EndHandleAsync();
