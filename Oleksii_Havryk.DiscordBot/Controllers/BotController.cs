@@ -1,55 +1,35 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Oleksii_Havryk.DiscordBot.Core;
-using Oleksii_Havryk.DiscordBot.Core.Interfaces;
-using Oleksii_Havryk.DiscordBot.ViewModels;
 
 namespace Oleksii_Havryk.DiscordBot.Controllers;
 /// <summary>
 ///     Bot controller.
 /// </summary>
 [Controller]
+[Route("[controller]")]
 public class BotController : Controller
 {
     private readonly Bot _bot;
-    private readonly ILoggerMessagesFolder _loggerMessagesFolder;
 
     public BotController(
-        Bot bot,
-        ILoggerMessagesFolder loggerMessagesFolder)
+        Bot bot)
     {
         _bot = bot;
-        _loggerMessagesFolder = loggerMessagesFolder;
     }
 
     //endpoints
     /* 1. Run
-     * 2. Stop
-     * 3. Get logger messages */
-    [Route("[action]")]
-    public async Task<ViewResult> Run()
+     * 2. Stop */
+    [HttpPut("[action]")]
+    public async Task<IActionResult> Run()
     {
         await _bot.StartAsync();
-        return View();
+        return Ok();
     }
-    [Route("[action]")]
-    public async Task<ViewResult> Stop()
+    [HttpPut("[action]")]
+    public async Task<IActionResult> Stop()
     {
         await _bot.StopAsync();
-        return View();
-    }
-    [Route("[action]")]
-    public async Task<ViewResult> Messages()
-    {
-        var latestMessages = _loggerMessagesFolder
-            .LatestMessages
-            .ToArray();
-        var otherMessages = _loggerMessagesFolder
-            .OtherMessages
-            .ToArray();
-        await _loggerMessagesFolder.UpdateMessagesAsync();
-
-        return View(model: new LoggerMessagesViewModel(
-            otherMessages,
-            latestMessages));
+        return Ok();
     }
 }

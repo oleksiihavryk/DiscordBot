@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleksii_Havryk.DiscordBot", "Oleksii_Havryk.DiscordBot\Oleksii_Havryk.DiscordBot.csproj", "{E39AC0D5-09AC-4A4C-A878-761516E531BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oleksii_Havryk.DiscordBot", "Oleksii_Havryk.DiscordBot\Oleksii_Havryk.DiscordBot.csproj", "{E39AC0D5-09AC-4A4C-A878-761516E531BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleksii_Havryk.DiscordBot.Core", "Oleksii_Havryk.DiscordBot.Core\Oleksii_Havryk.DiscordBot.Core.csproj", "{CF64069A-C223-4E39-B7CD-22BCEA5F4059}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oleksii_Havryk.DiscordBot.Core", "Oleksii_Havryk.DiscordBot.Core\Oleksii_Havryk.DiscordBot.Core.csproj", "{CF64069A-C223-4E39-B7CD-22BCEA5F4059}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleksii_Havryk.DiscordBot.Domain", "Oleksii_Havryk.DiscordBot.Domain\Oleksii_Havryk.DiscordBot.Domain.csproj", "{D78C6E82-2F33-438D-A5F7-637D54525D4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleksii_Havryk_DiscordBot.Shared", "Oleksii_Havryk_DiscordBot.Shared\Oleksii_Havryk_DiscordBot.Shared.csproj", "{FB53AE4F-EF37-4C10-8C0B-37E20C41FD9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{CF64069A-C223-4E39-B7CD-22BCEA5F4059}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF64069A-C223-4E39-B7CD-22BCEA5F4059}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF64069A-C223-4E39-B7CD-22BCEA5F4059}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D78C6E82-2F33-438D-A5F7-637D54525D4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D78C6E82-2F33-438D-A5F7-637D54525D4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D78C6E82-2F33-438D-A5F7-637D54525D4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D78C6E82-2F33-438D-A5F7-637D54525D4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB53AE4F-EF37-4C10-8C0B-37E20C41FD9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB53AE4F-EF37-4C10-8C0B-37E20C41FD9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB53AE4F-EF37-4C10-8C0B-37E20C41FD9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB53AE4F-EF37-4C10-8C0B-37E20C41FD9F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

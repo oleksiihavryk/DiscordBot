@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Oleksii_Havryk.DiscordBot.Domain;
 
 namespace Oleksii_Havryk.DiscordBot.Core.Interfaces;
 

@@ -15,6 +15,7 @@ public sealed class Bot
     private readonly ICommandHandlerService _commandHandlerService;
     private readonly IBotLoggingService _botLoggingService;
     private readonly IOptions<BotOptions> _tokenOptions;
+    private bool _isWork = false;
 
     public Bot(
         DiscordSocketClient client,  
@@ -32,22 +33,32 @@ public sealed class Bot
 
     public async Task StartAsync()
     {
-        await _commandHandlerService.BeginHandleAsync();
-        await _languageFilterService.BeginHandleAsync();
-        await _botLoggingService.BeginHandleAsync();
+        if (_isWork == false)
+        {
+            await _commandHandlerService.BeginHandleAsync();
+            await _languageFilterService.BeginHandleAsync();
+            await _botLoggingService.BeginHandleAsync();
 
-        await _client.LoginAsync(
-            tokenType: TokenType.Bot,
-            token: _tokenOptions.Value.TokenValue);
-        await _client.StartAsync();
+            await _client.LoginAsync(
+                tokenType: TokenType.Bot,
+                token: _tokenOptions.Value.TokenValue);
+            await _client.StartAsync();
+
+            _isWork = true;
+        }
     }
     public async Task StopAsync()
     {
-        await _client.StopAsync();
-        await _client.LogoutAsync();
+        if (_isWork)
+        {
+            await _client.StopAsync();
+            await _client.LogoutAsync();
 
-        await _commandHandlerService.EndHandleAsync();
-        await _languageFilterService.EndHandleAsync();
-        await _botLoggingService.EndHandleAsync();
+            await _commandHandlerService.EndHandleAsync();
+            await _languageFilterService.EndHandleAsync();
+            await _botLoggingService.EndHandleAsync();
+
+            _isWork = false;
+        }
     }
 }

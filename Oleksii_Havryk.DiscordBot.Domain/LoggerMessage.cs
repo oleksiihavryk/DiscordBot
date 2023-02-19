@@ -1,12 +1,16 @@
 ﻿using Discord;
 
-namespace Oleksii_Havryk.DiscordBot.Core;
+namespace Oleksii_Havryk.DiscordBot.Domain;
 /// <summary>
-///     Containment logger LogMessage.
+///     Content information about logger message.
 /// </summary>
 public class LoggerMessage 
 {
-    public LogMessage LogMessage { get; set; }
+    public static IComparer<LoggerMessage> CompareByTime =>
+        ContainmentLoggerMessageByTimeComparer.Default;
+
+    public string Source { get; set; }
+    public string Message { get; set; }
     public DateTime AddTime { get; set; }
     public bool IsRead { get; set; } = false;
 
@@ -14,12 +18,10 @@ public class LoggerMessage
         LogMessage logMessage, 
         DateTime addTime)
     {
-        LogMessage = logMessage;
+        Source = logMessage.Source;
+        Message = logMessage.Message;
         AddTime = addTime;
     }
-
-    public static IComparer<LoggerMessage> CompareByTime => 
-        ContainmentLoggerMessageByTimeComparer.Default;
 
     public class ContainmentLoggerMessageByTimeComparer : IComparer<LoggerMessage>
     {

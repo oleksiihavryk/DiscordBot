@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Oleksii_Havryk.DiscordBot.Core.Interfaces;
+using LoggerMessage = Oleksii_Havryk.DiscordBot.Domain.LoggerMessage;
 
 namespace Oleksii_Havryk.DiscordBot.Core;
 
@@ -13,10 +14,12 @@ public class LoggerMessagesFolder : ILoggerMessagesFolder
 
     public IEnumerable<LoggerMessage> OtherMessages => 
         _messages.Where(
-            m => m.IsRead);
+            m => m.IsRead)
+            .ToList();
     public IEnumerable<LoggerMessage> LatestMessages => 
         _messages.Where(
-            m => !m.IsRead);
+            m => !m.IsRead)
+            .ToList();
 
     public TimeSpan ExpireTime { get; set; } = TimeSpan.FromDays(1);
 
