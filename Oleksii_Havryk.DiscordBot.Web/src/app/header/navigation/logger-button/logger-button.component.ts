@@ -11,7 +11,6 @@ export class LoggerButtonComponent {
   constructor(private applicationNavigator: ApplicationNavigatorService) {}
 
   public viewWindow() {
-    console.log(navigator);
     this.applicationNavigator.viewLoggerWindow();
   }
 }

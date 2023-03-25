@@ -37,6 +37,7 @@ services.AddDiscordBot(configuration: config);
 var app = builder.Build();
 
 app.UseRouting();
+app.UseHttpsRedirection();
 
 if (env.IsDevelopment())
 {

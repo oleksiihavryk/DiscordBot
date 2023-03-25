@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from, map, Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class BotService {
 
   constructor() { 
     //Try to get status of bot
-    const sub = from(fetch('https://localhost:10001/bot', {
+    const sub = from(fetch('http://localhost:10000/bot', {
       headers: {
         'Content-Type': 'application/json'
       },
@@ -99,7 +99,7 @@ export class BotService {
     })
   }
   private getOnBotRequest(): Observable<Response> {
-    return from(fetch('https://localhost:10001/bot/run', {
+    return from(fetch('http://localhost:10000/bot/run', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -107,7 +107,7 @@ export class BotService {
     }));
   }
   private getOffBotRequest(): Observable<Response> {
-    return from(fetch('https://localhost:10001/bot/stop', {
+    return from(fetch('http://localhost:10000/bot/stop', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'

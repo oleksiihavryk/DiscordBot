@@ -33,11 +33,11 @@ export class LoggerService {
     timer(this.updateIntervalInSeconds - 1, this.updateIntervalInMilliseconds)
       .pipe(
         mergeMap(() => this.requestUpdateAll())
-      ).subscribe({next(value) {console.log(value)}})
+      ).subscribe();
   }
 
   public requestUpdateAll(): Observable<Response> {
-    const requestAll = from(fetch('https://localhost:10001/logger', {
+    const requestAll = from(fetch('http://localhost:10000/logger', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -70,7 +70,7 @@ export class LoggerService {
     return requestAll;
   }
   public requestUpdateOld(): Observable<Response> {
-    const requestOld = from(fetch('https://localhost:10001/logger/old', {
+    const requestOld = from(fetch('http://localhost:10000/logger/old', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -98,7 +98,7 @@ export class LoggerService {
     return requestOld;
   }
   public requestUpdateNew() : Observable<Response> {
-    const requestNew = from(fetch('https://localhost:10001/logger/new', {
+    const requestNew = from(fetch('http://localhost:10000/logger/new', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
