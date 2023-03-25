@@ -17,6 +17,8 @@ public sealed class Bot
     private readonly IOptions<BotOptions> _tokenOptions;
     private bool _isWork = false;
 
+    public bool IsWork => _isWork;
+
     public Bot(
         DiscordSocketClient client,  
         ICommandHandlerService commandHandlerService, 

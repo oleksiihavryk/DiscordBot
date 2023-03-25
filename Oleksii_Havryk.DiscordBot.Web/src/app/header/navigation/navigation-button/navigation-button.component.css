@@ -1,0 +1,10 @@
+a {
+    margin: 0 5px;
+    text-decoration: none;
+    color: blue;
+    transition-duration: 0.4s;
+    font-size: 24px;
+}
+a:hover {
+    color: white;
+}

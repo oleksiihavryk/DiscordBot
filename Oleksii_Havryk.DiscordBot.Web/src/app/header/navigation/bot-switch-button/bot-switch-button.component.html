@@ -1,0 +1,6 @@
+<app-navigation-button [action]="botService.onBot.bind(this.botService)" *ngIf="botService.isOff">
+    On
+</app-navigation-button>
+<app-navigation-button [action]="botService.offBot.bind(this.botService)" *ngIf="botService.isOn">
+    Off
+</app-navigation-button>

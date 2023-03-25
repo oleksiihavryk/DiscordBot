@@ -1,0 +1,26 @@
+<app-application-window title="Bot logger">
+    <p>Logger information is automatically updated every {{ loggerService.updateIntervalInSeconds }} seconds.</p>
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr><th scope="col">Time</th><th scope="col">Source</th><th scope="col">Message</th><th>Functions</th></tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="3" class="text-center">
+                <h3 style="margin: 0;">New</h3>
+            </td>
+            <td><button type="button" class="btn btn-info" (click)="updateNew()">Update</button></td></tr>
+            <tr *ngFor="let nm of loggerService.newMessages">
+                <td>{{ nm.addTime | date: 'medium' }}</td><td>{{ nm.source }}</td><td>{{ nm.message }}</td>
+            </tr>
+            <tr *ngIf="loggerService.anyNewMessages === false"><td colspan="3" class="text-center">There is no any of new messages in logger...</td></tr>
+            <tr><td colspan="3" class="text-center">
+                <h3 style="margin: 0;">Old</h3>
+            </td>
+            <td><button type="button" class="btn btn-info" (click)="updateOld()">Update</button></td></tr>
+            <tr *ngFor="let om of loggerService.oldMessages">
+                <td>{{ om.addTime | date: 'medium' }}</td><td>{{ om.source }}</td><td>{{ om.message }}</td>
+            </tr>
+            <tr *ngIf="loggerService.anyOldMessages === false"><td colspan="3" class="text-center">There is no any of old messages in logger...</td></tr>
+        </tbody>
+    </table>
+</app-application-window>

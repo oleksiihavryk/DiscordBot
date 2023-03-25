@@ -1,0 +1,24 @@
+header {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+div.header-top {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-between;
+}
+h1 {
+    flex-shrink: 4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 48px;
+}
+img{
+    width: 140px;
+    height: 100px;
+}

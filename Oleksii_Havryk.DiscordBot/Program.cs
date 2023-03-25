@@ -20,15 +20,14 @@ services.AddAutoMapper(opt =>
     opt.CreateMap<LoggerMessage, LoggerMessageDto>();
 });
 
+const string defaultPolicy = "Default";
 services.AddCors(opt =>
 {
-    const string defaultPolicy = "Default";
-
     opt.DefaultPolicyName = defaultPolicy;
     opt.AddPolicy(name: defaultPolicy, opt =>
     {
         opt.AllowAnyHeader();
-        opt.WithOrigins("https://localhost:8000");
+        opt.WithOrigins("http://localhost:8000", "https://localhost:8001");
         opt.AllowAnyMethod();
     });
 });
@@ -51,6 +50,8 @@ if (env.IsDevelopment())
         opt.SwaggerEndpoint("swagger/v1/swagger.json", "v1");
     });
 }
+
+app.UseCors(defaultPolicy);
 
 app.UseStaticFiles();
 
