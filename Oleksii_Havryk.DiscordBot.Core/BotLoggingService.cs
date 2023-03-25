@@ -42,26 +42,9 @@ public class BotLoggingService : IBotLoggingService
         if (message.Exception is not null)
         {
             var ex = message.Exception;
-            switch (ex)
-            {
-                case CommandException commandException:
-                {
-                    _logger.LogError(message: $"[{message.Source}] {message.Message}\n" +
-                                              "Command context:\n" +
-                                              $"User: {commandException.Context.User.Username},\n" +
-                                              $"Command: {commandException.Command.Name},\n" +
-                                              $"Exception message: {commandException.Message},\n" +
-                                              $"Exception stack trace: {commandException.StackTrace}");
-                    break;
-                }
-                default:
-                {
-                    _logger.LogError(
-                        message: $"[{message.Source}] {message.Message}\n", 
-                        exception: message.Exception);
-                    break;
-                }
-            }
+            _logger.LogError(
+                message: $"[{message.Source}] {message.Message}\n",
+                exception: message.Exception);
         }
         else
         {
