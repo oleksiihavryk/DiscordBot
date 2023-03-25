@@ -21,18 +21,18 @@ public class LanguageFilterService : ILanguageFilterService
 
     public async Task BeginHandleAsync()
     {
-        _client.MessageReceived += HandleAsync;
+        _client.MessageReceived += FilterDiscordMessage;
 
         await Task.CompletedTask;
     }
     public async Task EndHandleAsync()
     {
-        _client.MessageReceived += HandleAsync;
+        _client.MessageReceived += FilterDiscordMessage;
 
         await Task.CompletedTask;
     }
 
-    private async Task HandleAsync(SocketMessage arg)
+    public virtual async Task FilterDiscordMessage(SocketMessage arg)
     {
         if (!arg.Author.IsBot && !arg.Author.IsWebhook && !string.IsNullOrWhiteSpace(arg.Content))
         {

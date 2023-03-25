@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Json;
-using Oleksii_Havryk.DiscordBot.Core.Interfaces;
+﻿using Oleksii_Havryk.DiscordBot.Core.Interfaces;
 
 namespace Oleksii_Havryk.DiscordBot.Core;
 /// <summary>

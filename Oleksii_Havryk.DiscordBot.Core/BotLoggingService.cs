@@ -26,18 +26,18 @@ public class BotLoggingService : IBotLoggingService
 
     public async Task BeginHandleAsync()
     {
-        _client.Log += HandleAsync;
+        _client.Log += LogBotMessage;
 
         await Task.CompletedTask;
     }
     public async Task EndHandleAsync()
     {
-        _client.Log -= HandleAsync;
+        _client.Log -= LogBotMessage;
 
         await Task.CompletedTask;
     }
 
-    private async Task HandleAsync(LogMessage message)
+    public virtual async Task LogBotMessage(LogMessage message)
     {
         if (message.Exception is not null)
         {
@@ -50,7 +50,7 @@ public class BotLoggingService : IBotLoggingService
                                               "Command context:\n" +
                                               $"User: {commandException.Context.User.Username},\n" +
                                               $"Command: {commandException.Command.Name},\n" +
-                                              $"Exception LogMessage: {commandException.Message},\n" +
+                                              $"Exception message: {commandException.Message},\n" +
                                               $"Exception stack trace: {commandException.StackTrace}");
                     break;
                 }
