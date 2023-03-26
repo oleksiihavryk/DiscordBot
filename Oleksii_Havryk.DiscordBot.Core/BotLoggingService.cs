@@ -41,7 +41,6 @@ public class BotLoggingService : IBotLoggingService
     {
         if (message.Exception is not null)
         {
-            var ex = message.Exception;
             _logger.LogError(
                 message: $"[{message.Source}] {message.Message}\n",
                 exception: message.Exception);

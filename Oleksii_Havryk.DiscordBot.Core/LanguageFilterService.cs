@@ -53,12 +53,8 @@ public class LanguageFilterService : ILanguageFilterService
     private async Task WordIsInappropriateAsync(SocketMessage socketMessage)
     {
         await socketMessage.DeleteAsync();
-        await socketMessage.Channel.SendMessageAsync(
-            text: $"@everyone Альорт!!! " +
-                  $"Кацап в чаті!!! " +
-                  $"Ось він -> {MentionUtils.MentionUser(socketMessage.Author.Id)}, " +
-                  $"гнобіть його!");
-        if ((await socketMessage.Channel.GetUserAsync(socketMessage.Author.Id)) is IGuildUser user)
+        await socketMessage.Channel.SendMessageAsync("!");
+        if (socketMessage.Author is IGuildUser user)
         {
             await user.SetTimeOutAsync(TimeSpan.FromSeconds(10));
         }
