@@ -8,9 +8,5 @@ import { ApplicationNavigatorService } from 'src/app/services/application-naviga
   styleUrls: ['./logger-button.component.css']
 })
 export class LoggerButtonComponent {
-  constructor(private applicationNavigator: ApplicationNavigatorService) {}
-
-  public viewWindow() {
-    this.applicationNavigator.viewLoggerWindow();
-  }
+  constructor(public applicationNavigator: ApplicationNavigatorService) {}
 }
