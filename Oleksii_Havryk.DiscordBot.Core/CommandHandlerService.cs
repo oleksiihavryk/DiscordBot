@@ -22,15 +22,15 @@ public class CommandHandlerService : ICommandHandlerService
     public async Task BeginHandleAsync()
     {
         await _interactionService.AddModuleAsync<BasicInteractionModule>(services: null);
-        _client.InteractionCreated += HandleInteraction;
+        _client.InteractionCreated += ExecuteCommand;
     }
     public async Task EndHandleAsync()
     {
-        _client.InteractionCreated -= HandleInteraction;
+        _client.InteractionCreated -= ExecuteCommand;
         await _interactionService.RemoveModuleAsync<BasicInteractionModule>();
     }
 
-    private async Task HandleInteraction(SocketInteraction arg)
+    public virtual async Task ExecuteCommand(SocketInteraction arg)
     {
         var ctx = new SocketInteractionContext(_client, arg);
         await _interactionService.ExecuteCommandAsync(ctx, services: null);

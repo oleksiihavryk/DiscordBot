@@ -8,7 +8,7 @@ namespace Oleksii_Havryk.DiscordBot.Core;
 /// <summary>
 ///     Discord bot instance.
 /// </summary>
-public sealed class Bot
+public class Bot
 {
     private readonly DiscordSocketClient _client;
     private readonly ILanguageFilterService _languageFilterService;
@@ -16,6 +16,13 @@ public sealed class Bot
     private readonly IBotLoggingService _botLoggingService;
     private readonly IOptions<BotOptions> _tokenOptions;
     private bool _isWork = false;
+
+    private IDiscordBotService[] BaseServices => new IDiscordBotService[]
+    {
+        _languageFilterService,
+        _commandHandlerService,
+        _botLoggingService,
+    };
 
     public bool IsWork => _isWork;
 
@@ -34,12 +41,15 @@ public sealed class Bot
     }
 
     public async Task StartAsync()
+        => await StartAsync(BaseServices);
+    public async Task StopAsync()
+        => await StopAsync(BaseServices);
+
+    private async Task StartAsync(params IDiscordBotService[] services)
     {
         if (_isWork == false)
         {
-            await _commandHandlerService.BeginHandleAsync();
-            await _languageFilterService.BeginHandleAsync();
-            await _botLoggingService.BeginHandleAsync();
+            await Task.WhenAll(services.Select(s => s.BeginHandleAsync()));
 
             await _client.LoginAsync(
                 tokenType: TokenType.Bot,
@@ -49,16 +59,13 @@ public sealed class Bot
             _isWork = true;
         }
     }
-    public async Task StopAsync()
+    private async Task StopAsync(params IDiscordBotService[] services)
     {
         if (_isWork)
         {
             await _client.StopAsync();
             await _client.LogoutAsync();
-
-            await _commandHandlerService.EndHandleAsync();
-            await _languageFilterService.EndHandleAsync();
-            await _botLoggingService.EndHandleAsync();
+            await Task.WhenAll(services.Select(s => s.EndHandleAsync()));
 
             _isWork = false;
         }

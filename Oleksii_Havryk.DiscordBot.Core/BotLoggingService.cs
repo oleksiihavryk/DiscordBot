@@ -26,42 +26,24 @@ public class BotLoggingService : IBotLoggingService
 
     public async Task BeginHandleAsync()
     {
-        _client.Log += HandleAsync;
+        _client.Log += LogBotMessage;
 
         await Task.CompletedTask;
     }
     public async Task EndHandleAsync()
     {
-        _client.Log -= HandleAsync;
+        _client.Log -= LogBotMessage;
 
         await Task.CompletedTask;
     }
 
-    private async Task HandleAsync(LogMessage message)
+    public virtual async Task LogBotMessage(LogMessage message)
     {
         if (message.Exception is not null)
         {
-            var ex = message.Exception;
-            switch (ex)
-            {
-                case CommandException commandException:
-                {
-                    _logger.LogError(message: $"[{message.Source}] {message.Message}\n" +
-                                              "Command context:\n" +
-                                              $"User: {commandException.Context.User.Username},\n" +
-                                              $"Command: {commandException.Command.Name},\n" +
-                                              $"Exception LogMessage: {commandException.Message},\n" +
-                                              $"Exception stack trace: {commandException.StackTrace}");
-                    break;
-                }
-                default:
-                {
-                    _logger.LogError(
-                        message: $"[{message.Source}] {message.Message}\n", 
-                        exception: message.Exception);
-                    break;
-                }
-            }
+            _logger.LogError(
+                message: $"[{message.Source}] {message.Message}\n",
+                exception: message.Exception);
         }
         else
         {

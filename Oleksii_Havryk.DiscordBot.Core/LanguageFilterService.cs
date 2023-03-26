@@ -21,39 +21,42 @@ public class LanguageFilterService : ILanguageFilterService
 
     public async Task BeginHandleAsync()
     {
-        _client.MessageReceived += HandleAsync;
+        _client.MessageReceived += FilterDiscordMessage;
 
         await Task.CompletedTask;
     }
     public async Task EndHandleAsync()
     {
-        _client.MessageReceived += HandleAsync;
+        _client.MessageReceived += FilterDiscordMessage;
 
         await Task.CompletedTask;
     }
 
-    private async Task HandleAsync(SocketMessage arg)
+    public async Task FilterDiscordMessage(SocketMessage arg)
     {
         if (!arg.Author.IsBot && !arg.Author.IsWebhook && !string.IsNullOrWhiteSpace(arg.Content))
         {
-            var words = arg.Content.Trim().ToLower().Split(' ');
+            var words = ExtractWordsAsync(arg);
             var isAllowed = words.Length != 1
                 ? await _languageFilter.FilterWordsAsync(words)
                 : await _languageFilter.FilterWordAsync(words[0]);
 
             if (!isAllowed)
             {
-                await arg.DeleteAsync();
-                await arg.Channel.SendMessageAsync(
-                    text: $"@everyone Альорт!!! " +
-                          $"Кацап в чаті!!! " +
-                          $"Ось він -> {MentionUtils.MentionUser(arg.Author.Id)}, " +
-                          $"гнобіть його!");
-                if ((await arg.Channel.GetUserAsync(arg.Author.Id)) is IGuildUser user)
-                {
-                    await user.SetTimeOutAsync(TimeSpan.FromSeconds(10));
-                }
+                await WordIsInappropriateAsync(arg);
             }
+        }
+    }
+
+    private string[] ExtractWordsAsync(SocketMessage arg)
+        => arg.Content.Trim().ToLower().Split(' ');
+    private async Task WordIsInappropriateAsync(SocketMessage socketMessage)
+    {
+        await socketMessage.DeleteAsync();
+        await socketMessage.Channel.SendMessageAsync("!");
+        if (socketMessage.Author is IGuildUser user)
+        {
+            await user.SetTimeOutAsync(TimeSpan.FromSeconds(10));
         }
     }
 }
