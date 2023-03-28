@@ -23,6 +23,13 @@ public static class ConfigurationExtensions
                 .GetSection("Bot")
                 .GetValue<string>("Token") ?? string.Empty;
         });
+        //Exceptional users.
+        services.AddOptions<ExceptionalUsersOptions>().Configure(euo =>
+        {
+            euo.Identificators = configuration
+                .GetSection("Bot:ExceptionalUserIds")
+                .Get<string[]>() ?? Array.Empty<string>();
+        });
 
         //Bot standard inner controller elements.
         var client = new DiscordSocketClient(config: new DiscordSocketConfig()
