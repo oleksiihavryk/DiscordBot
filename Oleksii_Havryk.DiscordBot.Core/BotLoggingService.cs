@@ -36,19 +36,21 @@ public class BotLoggingService : IBotLoggingService
 
         await Task.CompletedTask;
     }
-
+    
     public virtual async Task LogBotMessage(LogMessage message)
     {
-        if (message.Exception is not null)
+        LogMessage newMessage = FormatMessage(message);
+
+        if (newMessage.Exception is not null)
         {
             _logger.LogError(
-                message: $"[{message.Source}] {message.Message}\n",
-                exception: message.Exception);
+                message: $"[{newMessage.Source}] {newMessage.Message}",
+                exception: newMessage.Exception);
         }
         else
         {
             _logger.Log(
-                    logLevel: message.Severity switch
+                    logLevel: newMessage.Severity switch
                     {
                         LogSeverity.Critical => LogLevel.Critical,
                         LogSeverity.Debug => LogLevel.Debug,
@@ -58,9 +60,20 @@ public class BotLoggingService : IBotLoggingService
                         LogSeverity.Warning => LogLevel.Warning,
                         _ => LogLevel.None
                     }, 
-                message: $"[{message.Source}] {message.Message}");
+                message: $"[{newMessage.Source}] {newMessage.Message}");
         }
 
-        await _loggerMessagesFolder.AddToLatestAsync(message);
+        await _loggerMessagesFolder.AddToLatestAsync(newMessage);
+    }
+
+    private LogMessage FormatMessage(LogMessage message)
+    {
+        return new LogMessage(
+            severity: message.Severity,
+            source: message.Source,
+            message: message.Exception != null ? 
+                $"{message.Message} ({message.Exception.Message})" : 
+                message.Message,
+            exception: message.Exception);
     }
 }
