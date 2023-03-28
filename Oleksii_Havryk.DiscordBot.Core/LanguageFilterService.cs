@@ -82,7 +82,8 @@ public class LanguageFilterService : ILanguageFilterService
         {
             var textResponse = GetTextResponseOnInappropriateWord(user);
             await socketMessage.Channel.SendMessageAsync(textResponse);
-            await user.SetTimeOutAsync(TimeSpan.FromSeconds(10));
+            if (user.GuildPermissions.Administrator == false)
+                await user.SetTimeOutAsync(TimeSpan.FromSeconds(10));
         }
     }
 }
