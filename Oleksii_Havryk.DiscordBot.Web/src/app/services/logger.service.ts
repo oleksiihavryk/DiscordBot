@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { from, mergeMap, Observable, timer } from 'rxjs';
+import { map, Observable, switchMap, timer } from 'rxjs';
+import { ajax } from 'rxjs/ajax';
 
 export class LoggerMessage {
   constructor(
@@ -32,31 +33,16 @@ export class LoggerService {
   constructor() { 
     timer(this.updateIntervalInSeconds - 1, this.updateIntervalInMilliseconds)
       .pipe(
-        mergeMap(() => this.requestUpdateAll())
+        switchMap(() => this.requestUpdateAll())
       ).subscribe();
   }
 
-  public requestUpdateAll(): Observable<Response> {
-    const requestAll = from(fetch('http://localhost:10000/logger', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }));
+  public requestUpdateAll(): Observable<LoggerMessage[]> {
+    const requestAll = this.createUpdateRequest(null);
     const obs = requestAll.subscribe({
       next: async (value) => {
-        const res = value;
-        if (res.ok) {
-          const messages: LoggerMessage[] = await res.json();
-          this.newMessages = messages
-            .filter(v => v.isRead === false)
-            .sort((a,b) => new Date(b.addTime).getTime() - new Date(a.addTime).getTime());
-          this.oldMessages = messages
-            .filter(v => v.isRead)
-            .sort((a,b) => new Date(b.addTime).getTime() - new Date(a.addTime).getTime());
-        } else {
-          throw new Error('Unknown response from server.');
-        }
+        this.newMessages = value.filter(v => v.isRead === false);
+        this.oldMessages = value.filter(v => v.isRead);
       },
       complete() {
         obs.unsubscribe();
@@ -69,22 +55,11 @@ export class LoggerService {
 
     return requestAll;
   }
-  public requestUpdateOld(): Observable<Response> {
-    const requestOld = from(fetch('http://localhost:10000/logger/old', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }));
+  public requestUpdateOld(): Observable<LoggerMessage[]> {
+    const requestOld = this.createUpdateRequest(false);
     const obs = requestOld.subscribe({
-      next: async (value) => {
-        const res = value;
-        if (res.ok) {
-          var result: LoggerMessage[] = await res.json();
-          this.oldMessages = result.sort((a,b) => new Date(b.addTime).getTime() - new Date(a.addTime).getTime());;
-        } else {
-          throw new Error('Unknown response from server.');
-        }
+      next: (value) => {
+          this.oldMessages = value;
       },
       complete() {
         obs.unsubscribe();
@@ -97,22 +72,11 @@ export class LoggerService {
 
     return requestOld;
   }
-  public requestUpdateNew() : Observable<Response> {
-    const requestNew = from(fetch('http://localhost:10000/logger/new', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }));
+  public requestUpdateNew(): Observable<LoggerMessage[]> {
+    const requestNew = this.createUpdateRequest(true);
     const obs = requestNew.subscribe({
-      next: async (value) => {
-        const res = value;
-        if (res.ok) {
-          var result: LoggerMessage[] = await res.json();
-          this.newMessages = result.sort((a,b) => new Date(b.addTime).getTime() - new Date(a.addTime).getTime());;
-        } else {
-          throw new Error('Unknown response from server.');
-        }
+      next: (value) => {
+         this.newMessages = value;
       },
       complete() {
         obs.unsubscribe();
@@ -124,5 +88,29 @@ export class LoggerService {
     })
 
     return requestNew;
+  }
+  
+  createUpdateRequest(isNew: boolean | null = null): Observable<LoggerMessage[]> {
+    let request: Observable<LoggerMessage[]> | undefined;
+
+    switch (isNew) {
+      case true: {
+        request = ajax.getJSON('http://localhost:10000/logger/new');
+        break;
+      }
+      case false: {
+        request = ajax.getJSON('http://localhost:10000/logger/old');
+        break;
+      }
+      default: {
+        request = ajax.getJSON('http://localhost:10000/logger');
+      }
+    }
+
+    return request.pipe(
+      map((response) => {
+        return response.sort((a,b) => new Date(b.addTime).getTime() - new Date(a.addTime).getTime());
+      })
+    )
   }
 }
