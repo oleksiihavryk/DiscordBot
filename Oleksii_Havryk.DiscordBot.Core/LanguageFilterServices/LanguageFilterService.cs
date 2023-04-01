@@ -5,7 +5,7 @@ using Oleksii_Havryk.DiscordBot.Core.Extensions;
 using Oleksii_Havryk.DiscordBot.Core.Interfaces;
 using Oleksii_Havryk.DiscordBot.Core.Options;
 
-namespace Oleksii_Havryk.DiscordBot.Core;
+namespace Oleksii_Havryk.DiscordBot.Core.LanguageFilterServices;
 /// <summary>
 ///     Language filter bot service.
 /// </summary>
@@ -14,7 +14,7 @@ public class LanguageFilterService : ILanguageFilterService
     private readonly DiscordSocketClient _client;
     private readonly ILanguageFilter _languageFilter;
     private readonly ExceptionalUsersOptions _exceptionalUsers;
-    private readonly string[] _possibleTextAnswers = new []
+    private readonly string[] _possibleTextAnswers = new[]
     {
         "Dolboeb -> {0}",
         "Loh -> {0}",
@@ -24,7 +24,7 @@ public class LanguageFilterService : ILanguageFilterService
     };
 
     public LanguageFilterService(
-        DiscordSocketClient client, 
+        DiscordSocketClient client,
         ILanguageFilter languageFilter,
         IOptions<ExceptionalUsersOptions> options)
     {
@@ -46,11 +46,11 @@ public class LanguageFilterService : ILanguageFilterService
         await Task.CompletedTask;
     }
 
-    public async Task FilterDiscordMessage(SocketMessage arg)
+    public virtual async Task FilterDiscordMessage(SocketMessage arg)
     {
         if (!arg.Author.IsBot && !arg.Author.IsWebhook && !string.IsNullOrWhiteSpace(arg.Content))
         {
-            var words = ExtractWordsAsync(arg);
+            var words = ExtractWords(arg);
             var isAllowed = words.Length != 1
                 ? await _languageFilter.FilterWordsAsync(words)
                 : await _languageFilter.FilterWordAsync(words[0]);
@@ -62,9 +62,9 @@ public class LanguageFilterService : ILanguageFilterService
         }
     }
 
-    private string[] ExtractWordsAsync(SocketMessage arg)
+    protected virtual string[] ExtractWords(SocketMessage arg)
         => arg.Content.Trim().ToLower().Split(' ');
-    private string GetTextResponseOnInappropriateWord(IGuildUser user)
+    protected virtual string GetTextResponseOnInappropriateWord(IGuildUser user)
     {
         if (_exceptionalUsers.Identificators.Contains(user.Id.ToString()))
         {
@@ -72,10 +72,10 @@ public class LanguageFilterService : ILanguageFilterService
         }
 
         return string.Format(
-            _possibleTextAnswers.GetRandom(), 
+            _possibleTextAnswers.GetRandom(),
             MentionUtils.MentionUser(user.Id));
     }
-    private async Task WordIsInappropriateAsync(SocketMessage socketMessage)
+    protected virtual async Task WordIsInappropriateAsync(SocketMessage socketMessage)
     {
         await socketMessage.DeleteAsync();
         if (socketMessage.Author is IGuildUser user)

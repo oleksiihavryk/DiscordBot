@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Oleksii_Havryk.DiscordBot.Core.Interfaces;
+using Oleksii_Havryk.DiscordBot.Core.LanguageFilterServices;
 using Oleksii_Havryk.DiscordBot.Core.Options;
 
 namespace Oleksii_Havryk.DiscordBot.Core.Extensions;
@@ -58,7 +59,7 @@ public static class ConfigurationExtensions
         services.AddSingleton<ILoggerMessagesFolder, LoggerMessagesFolder>();
 
         //Bot inner services.
-        services.AddSingleton<ILanguageFilterService, LanguageFilterService>();
+        services.AddSingleton<ILanguageFilterService, LogImprovedLanguageFilterService>();
         services.AddSingleton<IBotLoggingService, BotLoggingService>();
         services.AddSingleton<ICommandHandlerService, CommandHandlerService>();
         
