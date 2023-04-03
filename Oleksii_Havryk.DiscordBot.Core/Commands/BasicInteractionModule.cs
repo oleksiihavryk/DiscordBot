@@ -2,7 +2,7 @@
 using Discord;
 using Discord.Interactions;
 
-namespace Oleksii_Havryk.DiscordBot.Core;
+namespace Oleksii_Havryk.DiscordBot.Core.Commands;
 /// <summary>
 ///     Bot commands module class.
 /// </summary>
@@ -27,7 +27,7 @@ public class BasicInteractionModule : InteractionModuleBase
         if (user is IGuildUser guildUser)
         {
             var channel = Context.Channel;
-            
+
             var messageId = (await channel.SendMessageAsync(
                 text: $"@everyone Голосування за кік {MentionUtils.MentionUser(user.Id)}.\n" +
                       "Для того щоб проголосувати \"за\" " +
@@ -46,7 +46,7 @@ public class BasicInteractionModule : InteractionModuleBase
                 .TryGetValue(new Emoji("❌"), out var againstData);
             message.Reactions
                 .TryGetValue(new Emoji("✅"), out var forData);
-            
+
             if (forData.ReactionCount > againstData.ReactionCount * 1.5)
             {
                 await guildUser.KickAsync(

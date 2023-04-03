@@ -1,5 +1,6 @@
 ﻿using Discord.Interactions;
 using Discord.WebSocket;
+using Oleksii_Havryk.DiscordBot.Core.Commands;
 using Oleksii_Havryk.DiscordBot.Core.Interfaces;
 
 namespace Oleksii_Havryk.DiscordBot.Core;
