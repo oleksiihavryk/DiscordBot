@@ -13,7 +13,7 @@ public class BasicInteractionModule : InteractionModuleBase
         description: "Команда для того щоб розпочати голосування за " +
                      "кік обраного користувача! ",
         runMode: RunMode.Async)]
-    public async Task Votekick(
+    public virtual async Task Votekick(
         [Description("Користувач який висуваєтся на кік.")] IUser user)
     {
         if (user.IsBot)
@@ -65,7 +65,7 @@ public class BasicInteractionModule : InteractionModuleBase
         description: "Команда для того щоб розпочати голосування за " +
                      "бан обраного користувача! ",
         runMode: RunMode.Async)]
-    public async Task Voteban(
+    public virtual async Task Voteban(
         [Description("Користувач який висуваєтся на бан.")] IUser user)
     {
         if (user.IsBot)

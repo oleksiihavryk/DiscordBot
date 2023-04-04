@@ -12,8 +12,9 @@ public class RecheckCommandHandlerService
 {
     public RecheckCommandHandlerService(
         DiscordSocketClient client,
-        InteractionService interactionService)
-        : base(interactionService, client)
+        InteractionService interactionService,
+        IServiceProvider services)
+        : base(interactionService, client, services)
     {
     }
 }

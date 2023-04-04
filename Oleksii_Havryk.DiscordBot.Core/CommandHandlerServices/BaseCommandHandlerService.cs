@@ -11,18 +11,21 @@ public class BaseCommandHandlerService<T> : ICommandHandlerService
 {
     private readonly InteractionService _interactionService;
     private readonly DiscordSocketClient _client;
+    private readonly IServiceProvider _services;
 
     public BaseCommandHandlerService(
         InteractionService interactionService,
-        DiscordSocketClient client)
+        DiscordSocketClient client,
+        IServiceProvider services)
     {
         _interactionService = interactionService;
         _client = client;
+        _services = services;
     }
 
     public async Task BeginHandleAsync()
     {
-        await _interactionService.AddModuleAsync<T>(services: null);
+        await _interactionService.AddModuleAsync<T>(_services);
         _client.InteractionCreated += ExecuteCommand;
     }
     public async Task EndHandleAsync()
