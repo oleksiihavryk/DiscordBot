@@ -2,7 +2,7 @@
 using Discord;
 using Discord.Interactions;
 
-namespace Oleksii_Havryk.DiscordBot.Core.Commands;
+namespace Oleksii_Havryk.DiscordBot.Core.CommandHandlerServices.Commands;
 /// <summary>
 ///     Bot commands module class.
 /// </summary>
