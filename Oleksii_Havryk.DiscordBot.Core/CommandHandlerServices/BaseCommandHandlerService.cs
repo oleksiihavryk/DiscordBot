@@ -1,19 +1,19 @@
 ﻿using Discord.Interactions;
 using Discord.WebSocket;
-using Oleksii_Havryk.DiscordBot.Core.Commands;
 using Oleksii_Havryk.DiscordBot.Core.Interfaces;
 
-namespace Oleksii_Havryk.DiscordBot.Core;
+namespace Oleksii_Havryk.DiscordBot.Core.CommandHandlerServices;
 /// <summary>
 ///     Command handler bot service.
 /// </summary>
-public class CommandHandlerService : ICommandHandlerService
+public class BaseCommandHandlerService<T> : ICommandHandlerService
+    where T : class
 {
     private readonly InteractionService _interactionService;
     private readonly DiscordSocketClient _client;
 
-    public CommandHandlerService(
-        InteractionService interactionService, 
+    public BaseCommandHandlerService(
+        InteractionService interactionService,
         DiscordSocketClient client)
     {
         _interactionService = interactionService;
@@ -22,13 +22,13 @@ public class CommandHandlerService : ICommandHandlerService
 
     public async Task BeginHandleAsync()
     {
-        await _interactionService.AddModuleAsync<BasicInteractionModule>(services: null);
+        await _interactionService.AddModuleAsync<T>(services: null);
         _client.InteractionCreated += ExecuteCommand;
     }
     public async Task EndHandleAsync()
     {
         _client.InteractionCreated -= ExecuteCommand;
-        await _interactionService.RemoveModuleAsync<BasicInteractionModule>();
+        await _interactionService.RemoveModuleAsync<T>();
     }
 
     public virtual async Task ExecuteCommand(SocketInteraction arg)

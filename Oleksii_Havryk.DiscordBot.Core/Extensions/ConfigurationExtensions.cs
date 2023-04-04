@@ -3,6 +3,8 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Oleksii_Havryk.DiscordBot.Core.CommandHandlerServices;
+using Oleksii_Havryk.DiscordBot.Core.Commands;
 using Oleksii_Havryk.DiscordBot.Core.Interfaces;
 using Oleksii_Havryk.DiscordBot.Core.LanguageFilterServices;
 using Oleksii_Havryk.DiscordBot.Core.Options;
@@ -61,7 +63,8 @@ public static class ConfigurationExtensions
         //Bot inner services.
         services.AddSingleton<ILanguageFilterService, LogImprovedLanguageFilterService>();
         services.AddSingleton<IBotLoggingService, BotLoggingService>();
-        services.AddSingleton<ICommandHandlerService, CommandHandlerService>();
+        services.AddSingleton<ICommandHandlerService, 
+            BaseCommandHandlerService<RecheckMessageInteractionModule>>();
         
         return services.AddSingleton<Bot>();
     }
