@@ -1,5 +1,4 @@
 ﻿using Discord;
-using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using Oleksii_Havryk.DiscordBot.Core.Interfaces;
@@ -26,18 +25,18 @@ public class BotLoggingService : IBotLoggingService
 
     public async Task BeginHandleAsync()
     {
-        _client.Log += LogBotMessage;
+        _client.Log += LogBotMessageAsync;
 
         await Task.CompletedTask;
     }
     public async Task EndHandleAsync()
     {
-        _client.Log -= LogBotMessage;
+        _client.Log -= LogBotMessageAsync;
 
         await Task.CompletedTask;
     }
     
-    public virtual async Task LogBotMessage(LogMessage message)
+    public virtual async Task LogBotMessageAsync(LogMessage message)
     {
         LogMessage newMessage = FormatMessage(message);
 

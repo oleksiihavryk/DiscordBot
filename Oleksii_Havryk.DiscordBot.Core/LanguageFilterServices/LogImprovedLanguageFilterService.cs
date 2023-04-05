@@ -20,10 +20,10 @@ public class LogImprovedLanguageFilterService : LanguageFilterService
         _loggingService = loggingService;
     }
 
-    protected override async Task WordIsInappropriateAsync(SocketMessage socketMessage)
+    protected override async Task WordIsInappropriateAsync(IMessage socketMessage)
     {
         await base.WordIsInappropriateAsync(socketMessage);
-        await _loggingService.LogBotMessage(new LogMessage(
+        await _loggingService.LogBotMessageAsync(new LogMessage(
             LogSeverity.Info,
             source: nameof(LogImprovedLanguageFilterService),
             message: $"User with nickname {socketMessage.Author.Username} " +

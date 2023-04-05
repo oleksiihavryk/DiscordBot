@@ -1,7 +1,5 @@
-﻿using System.Net.Sockets;
-using Discord;
+﻿using Discord;
 using Discord.Interactions;
-using Discord.WebSocket;
 using Oleksii_Havryk.DiscordBot.Core.Interfaces;
 
 namespace Oleksii_Havryk.DiscordBot.Core.CommandHandlerServices.Commands;
@@ -11,18 +9,19 @@ namespace Oleksii_Havryk.DiscordBot.Core.CommandHandlerServices.Commands;
 public class RecheckCommandInteractionModule : BasicInteractionModule
 {
     private readonly ILanguageFilterService _languageFilterService;
+    private readonly IBotLoggingService _loggingService;
 
-    public RecheckCommandInteractionModule(ILanguageFilterService languageFilterService)
+    public RecheckCommandInteractionModule(
+        ILanguageFilterService languageFilterService, 
+        IBotLoggingService loggingService)
     {
         _languageFilterService = languageFilterService;
+        _loggingService = loggingService;
     }
 
     [SlashCommand(
         name: "recheck",
-        description: "Команда для повторної перевірки повідомлень на наявність російських слів " +
-                     "які з яких то причин не були перевірені автоматично. " +
-                     "Переповіряє певну кількість (не більше 100) повідомлень " +
-                     "і тихо видаляє якщо там є російські слова.",
+        description: "Ініціює повторну перевірку повідомлень на наявність російських слів. ",
         runMode: RunMode.Async)]
     public virtual async Task Recheck(
         [MinValue(0), MaxValue(100)] int count)
@@ -39,12 +38,16 @@ public class RecheckCommandInteractionModule : BasicInteractionModule
         {
             foreach (var m in collection)
             {
-                if (m.Content.Length > 0 && message is SocketMessage socketMessage)
+                if (m.Content.Length > 0)
                     asyncCheckingMessage.Add(
-                        _languageFilterService.FilterDiscordMessage(socketMessage));
+                        _languageFilterService.FilterDiscordMessageAsync(m));
             }
         }
 
         await Task.WhenAll(asyncCheckingMessage);
+        await _loggingService.LogBotMessageAsync(new LogMessage(
+            severity: LogSeverity.Info,
+            source: nameof(RecheckCommandInteractionModule),
+            message: "Recheck operation was successfully ended."));
     }
 }

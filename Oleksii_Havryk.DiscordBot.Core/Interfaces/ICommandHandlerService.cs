@@ -7,5 +7,5 @@ namespace Oleksii_Havryk.DiscordBot.Core.Interfaces;
 /// </summary>
 public interface ICommandHandlerService : IDiscordBotService
 {
-    Task ExecuteCommand(SocketInteraction interaction);
+    Task ExecuteCommandAsync(SocketInteraction interaction);
 }

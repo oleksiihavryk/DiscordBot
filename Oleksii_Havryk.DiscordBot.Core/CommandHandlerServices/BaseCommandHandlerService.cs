@@ -26,17 +26,17 @@ public class BaseCommandHandlerService<T> : ICommandHandlerService
     public async Task BeginHandleAsync()
     {
         await _interactionService.AddModuleAsync<T>(_services);
-        _client.InteractionCreated += ExecuteCommand;
+        _client.InteractionCreated += ExecuteCommandAsync;
     }
     public async Task EndHandleAsync()
     {
-        _client.InteractionCreated -= ExecuteCommand;
+        _client.InteractionCreated -= ExecuteCommandAsync;
         await _interactionService.RemoveModuleAsync<T>();
     }
 
-    public virtual async Task ExecuteCommand(SocketInteraction arg)
+    public virtual async Task ExecuteCommandAsync(SocketInteraction arg)
     {
         var ctx = new SocketInteractionContext(_client, arg);
-        await _interactionService.ExecuteCommandAsync(ctx, services: null);
+        await _interactionService.ExecuteCommandAsync(ctx, _services);
     }
 }

@@ -35,18 +35,18 @@ public class LanguageFilterService : ILanguageFilterService
 
     public async Task BeginHandleAsync()
     {
-        _client.MessageReceived += FilterDiscordMessage;
+        _client.MessageReceived += FilterDiscordMessageAsync;
 
         await Task.CompletedTask;
     }
     public async Task EndHandleAsync()
     {
-        _client.MessageReceived += FilterDiscordMessage;
+        _client.MessageReceived += FilterDiscordMessageAsync;
 
         await Task.CompletedTask;
     }
 
-    public virtual async Task FilterDiscordMessage(SocketMessage arg)
+    public virtual async Task FilterDiscordMessageAsync(IMessage arg)
     {
         if (!arg.Author.IsBot && !arg.Author.IsWebhook && !string.IsNullOrWhiteSpace(arg.Content))
         {
@@ -62,7 +62,7 @@ public class LanguageFilterService : ILanguageFilterService
         }
     }
 
-    protected virtual string[] ExtractWords(SocketMessage arg)
+    protected virtual string[] ExtractWords(IMessage arg)
         => arg.Content.Trim().ToLower().Split(' ');
     protected virtual string GetTextResponseOnInappropriateWord(IGuildUser user)
     {
@@ -75,7 +75,7 @@ public class LanguageFilterService : ILanguageFilterService
             _possibleTextAnswers.GetRandom(),
             MentionUtils.MentionUser(user.Id));
     }
-    protected virtual async Task WordIsInappropriateAsync(SocketMessage socketMessage)
+    protected virtual async Task WordIsInappropriateAsync(IMessage socketMessage)
     {
         await socketMessage.DeleteAsync();
         if (socketMessage.Author is IGuildUser user)

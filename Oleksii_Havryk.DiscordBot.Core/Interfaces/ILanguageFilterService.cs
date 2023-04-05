@@ -1,4 +1,5 @@
-﻿using Discord.WebSocket;
+﻿using Discord;
+using Discord.WebSocket;
 
 namespace Oleksii_Havryk.DiscordBot.Core.Interfaces;
 
@@ -7,5 +8,5 @@ namespace Oleksii_Havryk.DiscordBot.Core.Interfaces;
 /// </summary>
 public interface ILanguageFilterService : IDiscordBotService
 {
-    Task FilterDiscordMessage(SocketMessage message);
+    Task FilterDiscordMessageAsync(IMessage message);
 }

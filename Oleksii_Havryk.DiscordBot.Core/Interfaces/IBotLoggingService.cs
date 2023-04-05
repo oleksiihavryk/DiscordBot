@@ -7,5 +7,5 @@ namespace Oleksii_Havryk.DiscordBot.Core.Interfaces;
 /// </summary>
 public interface IBotLoggingService : IDiscordBotService
 {
-    Task LogBotMessage(LogMessage message);
+    Task LogBotMessageAsync(LogMessage message);
 }
