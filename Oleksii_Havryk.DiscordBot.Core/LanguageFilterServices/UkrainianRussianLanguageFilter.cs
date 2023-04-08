@@ -1,6 +1,6 @@
 ﻿using Oleksii_Havryk.DiscordBot.Core.Interfaces;
 
-namespace Oleksii_Havryk.DiscordBot.Core;
+namespace Oleksii_Havryk.DiscordBot.Core.LanguageFilterServices;
 /// <summary>
 ///     Language filter default implementation.
 /// </summary>
@@ -13,7 +13,7 @@ public class UkrainianRussianLanguageFilter : ILanguageFilter
     public string Key { get; set; }
 
     public UkrainianRussianLanguageFilter(
-        IHttpClientFactory httpClientFactory, 
+        IHttpClientFactory httpClientFactory,
         string key)
     {
         _httpClient = httpClientFactory.CreateClient();
@@ -52,14 +52,14 @@ public class UkrainianRussianLanguageFilter : ILanguageFilter
 
         return result;
     }
-    public async Task<bool> FilterWordAsync(string word) => 
+    public async Task<bool> FilterWordAsync(string word) =>
         await FilterWordAsync(word, CancellationToken.None);
 
     private async Task<bool> FilterWordAsync(string word, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
 
-        if (String.IsNullOrEmpty(word))
+        if (string.IsNullOrEmpty(word))
             return true;
 
         var russianKeyWord = "\"def\":[]";
@@ -75,7 +75,7 @@ public class UkrainianRussianLanguageFilter : ILanguageFilter
             .ReadAsStringAsync(token);
 
         if (russianResponseContent.IndexOf(
-                value: russianKeyWord, 
+                value: russianKeyWord,
                 comparisonType: StringComparison.Ordinal) == -1)
         {
             var ukrainianKeyWord = $"Слова «{word}» не знайдено.";

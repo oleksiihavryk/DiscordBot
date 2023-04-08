@@ -3,7 +3,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using Oleksii_Havryk.DiscordBot.Core.Interfaces;
 
-namespace Oleksii_Havryk.DiscordBot.Core;
+namespace Oleksii_Havryk.DiscordBot.Core.LoggingServices;
 /// <summary>
 ///     Internal service in bot configuration for configure logging mechanism.
 /// </summary>
@@ -15,7 +15,7 @@ public class BotLoggingService : IBotLoggingService
 
     public BotLoggingService(
         DiscordSocketClient client,
-        ILogger<BotLoggingService> logger, 
+        ILogger<BotLoggingService> logger,
         ILoggerMessagesFolder loggerMessagesFolder)
     {
         _client = client;
@@ -35,7 +35,7 @@ public class BotLoggingService : IBotLoggingService
 
         await Task.CompletedTask;
     }
-    
+
     public virtual async Task LogBotMessageAsync(LogMessage message)
     {
         LogMessage newMessage = FormatMessage(message);
@@ -58,7 +58,7 @@ public class BotLoggingService : IBotLoggingService
                         LogSeverity.Verbose => LogLevel.Trace,
                         LogSeverity.Warning => LogLevel.Warning,
                         _ => LogLevel.None
-                    }, 
+                    },
                 message: $"[{newMessage.Source}] {newMessage.Message}");
         }
 
@@ -70,8 +70,8 @@ public class BotLoggingService : IBotLoggingService
         return new LogMessage(
             severity: message.Severity,
             source: message.Source,
-            message: message.Exception != null ? 
-                $"{message.Message} ({message.Exception.Message})" : 
+            message: message.Exception != null ?
+                $"{message.Message} ({message.Exception.Message})" :
                 message.Message,
             exception: message.Exception);
     }

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Oleksii_Havryk.DiscordBot.Core.CommandHandlerServices;
 using Oleksii_Havryk.DiscordBot.Core.Interfaces;
 using Oleksii_Havryk.DiscordBot.Core.LanguageFilterServices;
+using Oleksii_Havryk.DiscordBot.Core.LoggingServices;
 using Oleksii_Havryk.DiscordBot.Core.Options;
 
 namespace Oleksii_Havryk.DiscordBot.Core.Extensions;

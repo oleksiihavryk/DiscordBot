@@ -2,21 +2,21 @@
 using Oleksii_Havryk.DiscordBot.Core.Interfaces;
 using LoggerMessage = Oleksii_Havryk.DiscordBot.Domain.LoggerMessage;
 
-namespace Oleksii_Havryk.DiscordBot.Core;
+namespace Oleksii_Havryk.DiscordBot.Core.LoggingServices;
 
 /// <summary>
 ///     Logger message folder interface implementation.
 /// </summary>
 public class LoggerMessagesFolder : ILoggerMessagesFolder
 {
-    private readonly List<LoggerMessage> _messages = 
+    private readonly List<LoggerMessage> _messages =
         new List<LoggerMessage>();
 
-    public IEnumerable<LoggerMessage> OtherMessages => 
+    public IEnumerable<LoggerMessage> OtherMessages =>
         _messages.Where(
             m => m.IsRead)
             .ToList();
-    public IEnumerable<LoggerMessage> LatestMessages => 
+    public IEnumerable<LoggerMessage> LatestMessages =>
         _messages.Where(
             m => !m.IsRead)
             .ToList();

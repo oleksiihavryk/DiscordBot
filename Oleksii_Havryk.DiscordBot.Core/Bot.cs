@@ -10,21 +10,20 @@ namespace Oleksii_Havryk.DiscordBot.Core;
 /// </summary>
 public class Bot
 {
-    private readonly DiscordSocketClient _client;
-    private readonly ILanguageFilterService _languageFilterService;
-    private readonly ICommandHandlerService _commandHandlerService;
-    private readonly IBotLoggingService _botLoggingService;
-    private readonly IOptions<BotOptions> _tokenOptions;
-    private bool _isWork = false;
+    protected DiscordSocketClient Client { get; set; }
+    protected ILanguageFilterService LanguageFilterService { get; set; }
+    protected ICommandHandlerService CommandHandlerService { get; set; }
+    protected IBotLoggingService BotLoggingService { get; set; }
+    protected IOptions<BotOptions> TokenOptions { get; set; }
 
     private IDiscordBotService[] BaseServices => new IDiscordBotService[]
     {
-        _languageFilterService,
-        _commandHandlerService,
-        _botLoggingService,
+        LanguageFilterService,
+        CommandHandlerService,
+        BotLoggingService,
     };
 
-    public bool IsWork => _isWork;
+    public bool IsWork { get; protected set; } = false;
 
     public Bot(
         DiscordSocketClient client,  
@@ -33,41 +32,41 @@ public class Bot
         IBotLoggingService botLoggingService,
         IOptions<BotOptions> tokenOptions)
     {
-        _client = client;
-        _commandHandlerService = commandHandlerService;
-        _languageFilterService = languageFilterService;
-        _botLoggingService = botLoggingService;
-        _tokenOptions = tokenOptions;
+        Client = client;
+        CommandHandlerService = commandHandlerService;
+        LanguageFilterService = languageFilterService;
+        BotLoggingService = botLoggingService;
+        TokenOptions = tokenOptions;
     }
 
-    public async Task StartAsync()
+    public virtual async Task StartAsync()
         => await StartAsync(BaseServices);
-    public async Task StopAsync()
+    public virtual async Task StopAsync()
         => await StopAsync(BaseServices);
 
-    private async Task StartAsync(params IDiscordBotService[] services)
+    protected virtual async Task StartAsync(params IDiscordBotService[] services)
     {
-        if (_isWork == false)
+        if (IsWork == false)
         {
             await Task.WhenAll(services.Select(s => s.BeginHandleAsync()));
 
-            await _client.LoginAsync(
+            await Client.LoginAsync(
                 tokenType: TokenType.Bot,
-                token: _tokenOptions.Value.TokenValue);
-            await _client.StartAsync();
+                token: TokenOptions.Value.TokenValue);
+            await Client.StartAsync();
 
-            _isWork = true;
+            IsWork = true;
         }
     }
-    private async Task StopAsync(params IDiscordBotService[] services)
+    protected virtual async Task StopAsync(params IDiscordBotService[] services)
     {
-        if (_isWork)
+        if (IsWork)
         {
-            await _client.StopAsync();
-            await _client.LogoutAsync();
+            await Client.StopAsync();
+            await Client.LogoutAsync();
             await Task.WhenAll(services.Select(s => s.EndHandleAsync()));
 
-            _isWork = false;
+            IsWork = false;
         }
     }
 }
