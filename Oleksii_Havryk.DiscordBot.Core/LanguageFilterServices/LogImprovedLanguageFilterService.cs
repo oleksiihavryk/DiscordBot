@@ -5,7 +5,9 @@ using Oleksii_Havryk.DiscordBot.Core.Interfaces;
 using Oleksii_Havryk.DiscordBot.Core.Options;
 
 namespace Oleksii_Havryk.DiscordBot.Core.LanguageFilterServices;
-
+/// <summary>
+///     Language filter service with improved logging system.
+/// </summary>
 public class LogImprovedLanguageFilterService : LanguageFilterService
 {
     private readonly IBotLoggingService _loggingService;
