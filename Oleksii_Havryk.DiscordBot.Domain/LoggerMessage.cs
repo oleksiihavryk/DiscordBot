@@ -15,11 +15,12 @@ public class LoggerMessage
     public bool IsRead { get; set; } = false;
 
     public LoggerMessage(
-        LogMessage logMessage, 
-        DateTime addTime)
+        DateTime addTime, 
+        string source, 
+        string message)
     {
-        Source = logMessage.Source;
-        Message = logMessage.Message;
+        Source = source;
+        Message = message;
         AddTime = addTime;
     }
 

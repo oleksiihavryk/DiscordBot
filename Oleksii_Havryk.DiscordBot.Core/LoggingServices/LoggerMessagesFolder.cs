@@ -7,7 +7,7 @@ namespace Oleksii_Havryk.DiscordBot.Core.LoggingServices;
 /// <summary>
 ///     Logger message folder interface implementation.
 /// </summary>
-public class LoggerMessagesFolder : ILoggerMessagesFolder
+public sealed class LoggerMessagesFolder : ILoggerMessagesFolder
 {
     private readonly List<LoggerMessage> _messages =
         new List<LoggerMessage>();
@@ -23,11 +23,14 @@ public class LoggerMessagesFolder : ILoggerMessagesFolder
 
     public TimeSpan ExpireTime { get; set; } = TimeSpan.FromDays(1);
 
-    public async Task AddToLatestAsync(LogMessage message)
+    public async Task AddToLatestAsync(
+        string source, 
+        string message)
     {
         _messages.Add(item: new LoggerMessage(
-            message,
-            addTime: DateTime.Now));
+            addTime: DateTime.Now,
+            source,
+            message));
 
         await Task.CompletedTask;
     }

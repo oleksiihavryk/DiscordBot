@@ -10,8 +10,8 @@ namespace Oleksii_Havryk.DiscordBot.Core.LoggingServices;
 public class BotLoggingService : IBotLoggingService
 {
     private readonly DiscordSocketClient _client;
-    private readonly ILogger<BotLoggingService> _logger;
     private readonly ILoggerMessagesFolder _loggerMessagesFolder;
+    private readonly ILogger<BotLoggingService> _logger;
 
     public BotLoggingService(
         DiscordSocketClient client,
@@ -23,13 +23,13 @@ public class BotLoggingService : IBotLoggingService
         _loggerMessagesFolder = loggerMessagesFolder;
     }
 
-    public async Task BeginHandleAsync()
+    public virtual async Task BeginHandleAsync()
     {
         _client.Log += LogBotMessageAsync;
 
         await Task.CompletedTask;
     }
-    public async Task EndHandleAsync()
+    public virtual async Task EndHandleAsync()
     {
         _client.Log -= LogBotMessageAsync;
 
@@ -38,41 +38,32 @@ public class BotLoggingService : IBotLoggingService
 
     public virtual async Task LogBotMessageAsync(LogMessage message)
     {
-        LogMessage newMessage = FormatMessage(message);
+        var formattedMessage = GetFormatStringMessage(message);
 
-        if (newMessage.Exception is not null)
-        {
-            _logger.LogError(
-                message: $"[{newMessage.Source}] {newMessage.Message}",
-                exception: newMessage.Exception);
-        }
-        else
-        {
-            _logger.Log(
-                    logLevel: newMessage.Severity switch
-                    {
-                        LogSeverity.Critical => LogLevel.Critical,
-                        LogSeverity.Debug => LogLevel.Debug,
-                        LogSeverity.Error => LogLevel.Error,
-                        LogSeverity.Info => LogLevel.Information,
-                        LogSeverity.Verbose => LogLevel.Trace,
-                        LogSeverity.Warning => LogLevel.Warning,
-                        _ => LogLevel.None
-                    },
-                message: $"[{newMessage.Source}] {newMessage.Message}");
-        }
+        if (message.Exception is not null)
+            LogCaughtException(message.Source, formattedMessage, message.Exception);
+        else LogBySeverity(message.Severity, message.Source, formattedMessage);
 
-        await _loggerMessagesFolder.AddToLatestAsync(newMessage);
+        await _loggerMessagesFolder.AddToLatestAsync(message.Source, formattedMessage);
     }
 
-    private LogMessage FormatMessage(LogMessage message)
-    {
-        return new LogMessage(
-            severity: message.Severity,
-            source: message.Source,
-            message: message.Exception != null ?
-                $"{message.Message} ({message.Exception.Message})" :
-                message.Message,
-            exception: message.Exception);
-    }
+    protected virtual string GetFormatStringMessage(LogMessage message)
+        => $"{message.Message} ({message.Exception.Message})";
+    protected virtual void LogCaughtException(string source, string message, Exception exception)
+        => _logger.LogError(
+            message: $"[{source}] {message}",
+            exception: exception);
+    protected virtual void LogBySeverity(LogSeverity severity, string source, string message)
+        => _logger.Log(
+            logLevel: severity switch
+            {
+                LogSeverity.Critical => LogLevel.Critical,
+                LogSeverity.Debug => LogLevel.Debug,
+                LogSeverity.Error => LogLevel.Error,
+                LogSeverity.Info => LogLevel.Information,
+                LogSeverity.Verbose => LogLevel.Trace,
+                LogSeverity.Warning => LogLevel.Warning,
+                _ => LogLevel.None
+            },
+            message: $"[{source}] {message}");
 }

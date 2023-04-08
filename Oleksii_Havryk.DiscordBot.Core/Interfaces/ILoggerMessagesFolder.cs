@@ -11,6 +11,6 @@ public interface ILoggerMessagesFolder
     IEnumerable<LoggerMessage> OtherMessages { get; }
     IEnumerable<LoggerMessage> LatestMessages { get; }
 
-    Task AddToLatestAsync(LogMessage message);
+    Task AddToLatestAsync(string source, string message);
     Task UpdateMessagesAsync();
 }
