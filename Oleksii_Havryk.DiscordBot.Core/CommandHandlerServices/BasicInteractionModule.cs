@@ -1,13 +1,25 @@
 ﻿using System.ComponentModel;
 using Discord;
 using Discord.Interactions;
+using Oleksii_Havryk.DiscordBot.Core.Interfaces;
 
-namespace Oleksii_Havryk.DiscordBot.Core.CommandHandlerServices.Commands;
+namespace Oleksii_Havryk.DiscordBot.Core.CommandHandlerServices;
 /// <summary>
 ///     Bot commands module class.
 /// </summary>
 public class BasicInteractionModule : InteractionModuleBase
 {
+    protected ILanguageFilterService LanguageFilterService { get; set; }
+    protected IBotLoggingService LoggingService { get; set; }
+
+    public BasicInteractionModule(
+        ILanguageFilterService languageFilterService,
+        IBotLoggingService loggingService)
+    {
+        LanguageFilterService = languageFilterService;
+        LoggingService = loggingService;
+    }
+
     [SlashCommand(
         name: "votekick",
         description: "Команда для того щоб розпочати голосування за " +
@@ -111,5 +123,36 @@ public class BasicInteractionModule : InteractionModuleBase
             await channel.SendMessageAsync(
                 text: $"@everyone Голосування за бан {MentionUtils.MentionUser(user.Id)} провалилося.");
         }
+    }
+    [SlashCommand(
+        name: "recheck",
+        description: "Ініціює повторну перевірку повідомлень на наявність російських слів. ",
+        runMode: RunMode.Async)]
+    public virtual async Task Recheck(
+        [MinValue(0), MaxValue(100)] int count)
+    {
+        var message = await Context.Channel.SendMessageAsync("Бррр.");
+        var messages = Context.Channel.GetMessagesAsync(
+            fromMessage: message,
+            dir: Direction.Before,
+            limit: count,
+            mode: CacheMode.AllowDownload);
+
+        var asyncCheckingMessage = new List<Task>();
+        await foreach (var collection in messages)
+        {
+            foreach (var m in collection)
+            {
+                if (m.Content.Length > 0)
+                    asyncCheckingMessage.Add(
+                        LanguageFilterService.FilterDiscordMessageAsync(m));
+            }
+        }
+
+        await Task.WhenAll(asyncCheckingMessage);
+        await LoggingService.LogBotMessageAsync(new LogMessage(
+            severity: LogSeverity.Info,
+            source: nameof(RecheckCommandInteractionModule),
+            message: "Recheck operation was successfully ended."));
     }
 }

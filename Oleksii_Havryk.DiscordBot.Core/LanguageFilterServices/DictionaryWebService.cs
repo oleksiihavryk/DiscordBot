@@ -20,7 +20,7 @@ public abstract class DictionaryWebService : IDictionaryWebService
     public virtual async Task<bool> FindWordAsync(string word, CancellationToken token)
     {
         //create http request message
-        var checkOnUkrainian = CreateRequest(word);
+        var checkOnUkrainian = await CreateRequestAsync(word);
 
         //send request 
         var russianResponse = await HttpClient.SendAsync(checkOnUkrainian, token);
@@ -29,7 +29,7 @@ public abstract class DictionaryWebService : IDictionaryWebService
         return await HandleResponseAsync(russianResponse, token);
     }
 
-    protected abstract HttpRequestMessage CreateRequest(string word);
+    protected abstract Task<HttpRequestMessage> CreateRequestAsync(string word);
     protected abstract Task<bool> HandleResponseAsync(
         HttpResponseMessage response,
         CancellationToken token);

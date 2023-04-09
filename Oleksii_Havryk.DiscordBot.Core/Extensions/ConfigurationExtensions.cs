@@ -64,7 +64,9 @@ public static class ConfigurationExtensions
         //Bot inner services.
         services.AddSingleton<ILanguageFilterService, LanguageFilterService>();
         services.AddSingleton<IBotLoggingService, BotLoggingService>();
-        services.AddSingleton<ICommandHandlerService, RecheckCommandHandlerService>();
+        services.AddSingleton<
+            ICommandHandlerService,
+            CommandHandlerService<BasicInteractionModule>>();
         
         return services.AddSingleton<Bot>();
     }

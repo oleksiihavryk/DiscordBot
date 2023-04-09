@@ -14,10 +14,10 @@ public class UkrainianDictionaryWebService : DictionaryWebService, IUkrainianDic
     {
     }
 
-    protected override HttpRequestMessage CreateRequest(string word)
-        => new HttpRequestMessage(
+    protected override async Task<HttpRequestMessage> CreateRequestAsync(string word)
+        => await Task.FromResult(new HttpRequestMessage(
             method: HttpMethod.Get,
-            requestUri: $"https://slovnyk.ua/?swrd={word}");
+            requestUri: $"https://slovnyk.ua/?swrd={word}"));
     protected override async Task<bool> HandleResponseAsync(
         HttpResponseMessage response,
         CancellationToken token)

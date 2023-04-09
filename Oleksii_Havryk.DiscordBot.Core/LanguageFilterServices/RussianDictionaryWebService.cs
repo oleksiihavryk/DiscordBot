@@ -22,13 +22,13 @@ public class RussianDictionaryWebService : DictionaryWebService, IRussianDiction
         Key = options.Value.Key;
     }
 
-    protected override HttpRequestMessage CreateRequest(string word)
-        => new HttpRequestMessage(
+    protected override async Task<HttpRequestMessage> CreateRequestAsync(string word)
+        => await Task.FromResult(new HttpRequestMessage(
             method: HttpMethod.Get,
             requestUri: "https://dictionary.yandex.net/api/v1/dicservice.json/lookup?" +
                         $"key={Key}" +
                         $"&lang={Lang}" +
-                        $"&text={word}");
+                        $"&text={word}"));
     protected override async Task<bool> HandleResponseAsync(
         HttpResponseMessage response,
         CancellationToken token)
