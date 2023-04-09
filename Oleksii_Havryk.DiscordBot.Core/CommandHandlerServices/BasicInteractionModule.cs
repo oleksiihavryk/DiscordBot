@@ -152,7 +152,7 @@ public class BasicInteractionModule : InteractionModuleBase
         await Task.WhenAll(asyncCheckingMessage);
         await LoggingService.LogBotMessageAsync(new LogMessage(
             severity: LogSeverity.Info,
-            source: nameof(RecheckCommandInteractionModule),
+            source: nameof(BasicInteractionModule),
             message: "Recheck operation was successfully ended."));
     }
 }
