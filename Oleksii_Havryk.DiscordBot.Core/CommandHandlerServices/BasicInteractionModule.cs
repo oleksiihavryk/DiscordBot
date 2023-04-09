@@ -38,6 +38,14 @@ public class BasicInteractionModule : InteractionModuleBase
 
         if (user is IGuildUser guildUser)
         {
+            if (guildUser.GuildPermissions.Administrator)
+            {
+                await RespondAsync(
+                    text: "Лайна похавай))",
+                    ephemeral: true);
+                return;
+            }
+
             var channel = Context.Channel;
 
             var messageId = (await channel.SendMessageAsync(
@@ -90,6 +98,14 @@ public class BasicInteractionModule : InteractionModuleBase
 
         if (user is IGuildUser guildUser)
         {
+            if (guildUser.GuildPermissions.Administrator)
+            {
+                await RespondAsync(
+                    text: "Лайна похавай))",
+                    ephemeral: true);
+                return;
+            }
+
             var channel = Context.Channel;
 
             var messageId = (await channel.SendMessageAsync(
@@ -129,7 +145,10 @@ public class BasicInteractionModule : InteractionModuleBase
         description: "Ініціює повторну перевірку повідомлень на наявність російських слів. ",
         runMode: RunMode.Async)]
     public virtual async Task Recheck(
-        [MinValue(0), MaxValue(100)] int count)
+        [MinValue(0), 
+         MaxValue(100), 
+         Description("Загальна кількість перевіряємих повідомлень. (не більше 100 за раз)")] 
+        int count)
     {
         var message = await Context.Channel.SendMessageAsync("Бррр.");
         var messages = Context.Channel.GetMessagesAsync(
