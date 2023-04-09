@@ -6,6 +6,7 @@ public class BotOptions
 {
     public string TokenValue { get; set; }
 
+
     public BotOptions()
         : this(tokenValue: string.Empty)
     {

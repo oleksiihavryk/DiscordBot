@@ -33,6 +33,13 @@ public static class ConfigurationExtensions
                 .GetSection("Bot:ExceptionalUserIds")
                 .Get<string[]>() ?? Array.Empty<string>();
         });
+        //Russian dictionary api key
+        services.AddOptions<RussianDictionaryOptions>().Configure(rdo =>
+        {
+            rdo.Key = configuration
+                .GetSection("Bot")
+                .GetValue<string>("RussianDictionaryApiKey") ?? string.Empty;
+        });
 
         //Bot standard inner controller elements.
         var client = new DiscordSocketClient(config: new DiscordSocketConfig()
@@ -46,22 +53,16 @@ public static class ConfigurationExtensions
         services.AddSingleton<DiscordSocketClient>(client);
         services.AddSingleton<InteractionService>(interactionService);
 
-        //Bot inner services helpers.
-        services.AddSingleton<ILanguageFilter, UkrainianRussianLanguageFilter>(sp =>
-        {
-            var newServiceProvider = sp.CreateScope().ServiceProvider;
-            var httpClientFactory = newServiceProvider.GetRequiredService<IHttpClientFactory>();
+        //dictionary web services
+        services.AddSingleton<IUkrainianDictionaryWebService, UkrainianDictionaryWebService>();
+        services.AddSingleton<IRussianDictionaryWebService, RussianDictionaryWebService>();
 
-            return new UkrainianRussianLanguageFilter(
-                httpClientFactory: httpClientFactory,
-                key: configuration
-                    .GetSection("Bot")
-                    .GetValue<string>("RussianDictionaryApiKey") ?? string.Empty);
-        });
+        //Bot inner services helpers.
+        services.AddSingleton<ILanguageFilter, UkrainianRussianLanguageFilter>();
         services.AddSingleton<ILoggerMessagesFolder, LoggerMessagesFolder>();
 
         //Bot inner services.
-        services.AddSingleton<ILanguageFilterService, LogImprovedLanguageFilterService>();
+        services.AddSingleton<ILanguageFilterService, LanguageFilterService>();
         services.AddSingleton<IBotLoggingService, BotLoggingService>();
         services.AddSingleton<ICommandHandlerService, RecheckCommandHandlerService>();
         

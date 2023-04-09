@@ -11,10 +11,11 @@ namespace Oleksii_Havryk.DiscordBot.Core.LanguageFilterServices;
 /// </summary>
 public class LanguageFilterService : ILanguageFilterService
 {
-    private readonly DiscordSocketClient _client;
-    private readonly ILanguageFilter _languageFilter;
-    private readonly ExceptionalUsersOptions _exceptionalUsers;
-    private readonly string[] _possibleTextAnswers = new[]
+    protected DiscordSocketClient Client { get; set; }
+    protected ILanguageFilter LanguageFilter { get; set; }
+    protected ExceptionalUsersOptions ExceptionalUsers { get; set; }
+    protected IBotLoggingService LoggingService { get; set; }
+    protected string[] PossibleTextAnswers { get; set; } = new[]
     {
         "Dolboeb -> {0}",
         "Loh -> {0}",
@@ -26,34 +27,37 @@ public class LanguageFilterService : ILanguageFilterService
     public LanguageFilterService(
         DiscordSocketClient client,
         ILanguageFilter languageFilter,
-        IOptions<ExceptionalUsersOptions> options)
+        IOptions<ExceptionalUsersOptions> options, IBotLoggingService loggingService)
     {
-        _client = client;
-        _languageFilter = languageFilter;
-        _exceptionalUsers = options.Value;
+        Client = client;
+        LanguageFilter = languageFilter;
+        LoggingService = loggingService;
+        ExceptionalUsers = options.Value;
     }
 
     public async Task BeginHandleAsync()
     {
-        _client.MessageReceived += FilterDiscordMessageAsync;
+        Client.MessageReceived += FilterDiscordMessageAsync;
 
         await Task.CompletedTask;
     }
     public async Task EndHandleAsync()
     {
-        _client.MessageReceived += FilterDiscordMessageAsync;
+        Client.MessageReceived += FilterDiscordMessageAsync;
 
         await Task.CompletedTask;
     }
 
     public virtual async Task FilterDiscordMessageAsync(IMessage arg)
     {
-        if (!arg.Author.IsBot && !arg.Author.IsWebhook && !string.IsNullOrWhiteSpace(arg.Content))
+        var content = arg.Content;
+
+        if (!arg.Author.IsBot && !arg.Author.IsWebhook && !string.IsNullOrWhiteSpace(content))
         {
-            var words = ExtractWords(arg);
+            var words = ExtractWords(content);
             var isAllowed = words.Length != 1
-                ? await _languageFilter.FilterWordsAsync(words)
-                : await _languageFilter.FilterWordAsync(words[0]);
+                ? await LanguageFilter.FilterWordsAsync(words)
+                : await LanguageFilter.FilterWordAsync(words[0]);
 
             if (!isAllowed)
             {
@@ -62,28 +66,31 @@ public class LanguageFilterService : ILanguageFilterService
         }
     }
 
-    protected virtual string[] ExtractWords(IMessage arg)
-        => arg.Content.Trim().ToLower().Split(' ');
-    protected virtual string GetTextResponseOnInappropriateWord(IGuildUser user)
+    protected virtual string[] ExtractWords(string content)
+        => content.Trim().ToLower().Split(' ');
+    protected virtual string GetTextResponseOnInappropriateWord(ulong userId)
     {
-        if (_exceptionalUsers.Identificators.Contains(user.Id.ToString()))
-        {
+        if (ExceptionalUsers.Identificators.Contains(userId.ToString()))
             return "Сорі, помиливися, більше не повторится)))";
-        }
 
         return string.Format(
-            _possibleTextAnswers.GetRandom(),
-            MentionUtils.MentionUser(user.Id));
+            PossibleTextAnswers.GetRandom(),
+            MentionUtils.MentionUser(userId));
     }
     protected virtual async Task WordIsInappropriateAsync(IMessage socketMessage)
     {
         await socketMessage.DeleteAsync();
         if (socketMessage.Author is IGuildUser user)
         {
-            var textResponse = GetTextResponseOnInappropriateWord(user);
+            var textResponse = GetTextResponseOnInappropriateWord(user.Id);
             await socketMessage.Channel.SendMessageAsync(textResponse);
             if (user.GuildPermissions.Administrator == false)
                 await user.SetTimeOutAsync(TimeSpan.FromSeconds(10));
         }
+        await LoggingService.LogBotMessageAsync(new LogMessage(
+            LogSeverity.Info,
+            source: nameof(LanguageFilterService),
+            message: $"User with nickname {socketMessage.Author.Username} " +
+                     $"has been banned for message \"{socketMessage.Content}\""));
     }
 }

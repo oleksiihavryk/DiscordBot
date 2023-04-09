@@ -6,21 +6,18 @@ namespace Oleksii_Havryk.DiscordBot.Core.LanguageFilterServices;
 /// </summary>
 public class UkrainianRussianLanguageFilter : ILanguageFilter
 {
-    private const string Lang = "ru-ru";
-
-    private readonly HttpClient _httpClient;
-
-    public string Key { get; set; }
+    private readonly IUkrainianDictionaryWebService _ukrainianDictionaryWebService;
+    private readonly IRussianDictionaryWebService _russianDictionaryWebService;
 
     public UkrainianRussianLanguageFilter(
-        IHttpClientFactory httpClientFactory,
-        string key)
+        IUkrainianDictionaryWebService ukrainianDictionaryWebService, 
+        IRussianDictionaryWebService russianDictionaryWebService)
     {
-        _httpClient = httpClientFactory.CreateClient();
-        Key = key;
+        _ukrainianDictionaryWebService = ukrainianDictionaryWebService;
+        _russianDictionaryWebService = russianDictionaryWebService;
     }
 
-    public async Task<bool> FilterWordsAsync(string[] words)
+    public virtual async Task<bool> FilterWordsAsync(string[] words)
     {
         bool result = true;
         var source = new CancellationTokenSource();
@@ -52,46 +49,25 @@ public class UkrainianRussianLanguageFilter : ILanguageFilter
 
         return result;
     }
-    public async Task<bool> FilterWordAsync(string word) =>
+    public virtual async Task<bool> FilterWordAsync(string word) =>
         await FilterWordAsync(word, CancellationToken.None);
 
-    private async Task<bool> FilterWordAsync(string word, CancellationToken token)
+    protected virtual async Task<bool> FilterWordAsync(string word, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
 
-        if (string.IsNullOrEmpty(word))
+        if (string.IsNullOrEmpty(word.Trim()))
             return true;
 
-        var russianKeyWord = "\"def\":[]";
-        var checkOnRussian = new HttpRequestMessage(
-            method: HttpMethod.Get,
-            requestUri:
-            $"https://dictionary.yandex.net/api/v1/dicservice.json/lookup?" +
-            $"key={Key}" +
-            $"&lang={Lang}" +
-            $"&text={word}");
-        var russianResponse = await _httpClient.SendAsync(checkOnRussian, token);
-        var russianResponseContent = await russianResponse.Content
-            .ReadAsStringAsync(token);
+        var findWordInRussianDictionary = await _russianDictionaryWebService
+            .FindWordAsync(word, token);
 
-        if (russianResponseContent.IndexOf(
-                value: russianKeyWord,
-                comparisonType: StringComparison.Ordinal) == -1)
+        if (findWordInRussianDictionary)
         {
-            var ukrainianKeyWord = $"Слова «{word}» не знайдено.";
-            var checkUkrainian = new HttpRequestMessage(
-                method: HttpMethod.Get,
-                requestUri: $"http://sum.in.ua/?swrd={word}");
-            var ukrainianResponse = await _httpClient.SendAsync(checkUkrainian, token);
-            var ukrainianResponseContent = await ukrainianResponse.Content
-                .ReadAsStringAsync(token);
+            var findWordInUkrainianDictionary = await _ukrainianDictionaryWebService
+                .FindWordAsync(word, token);
 
-            if (ukrainianResponseContent.IndexOf(
-                    value: ukrainianKeyWord,
-                    comparisonType: StringComparison.Ordinal) != -1)
-            {
-                return false;
-            }
+            return findWordInUkrainianDictionary;
         }
 
         return true;
@@ -99,6 +75,7 @@ public class UkrainianRussianLanguageFilter : ILanguageFilter
 
     public void Dispose()
     {
-        _httpClient.Dispose();
+        _ukrainianDictionaryWebService.Dispose();
+        _russianDictionaryWebService.Dispose();
     }
 }

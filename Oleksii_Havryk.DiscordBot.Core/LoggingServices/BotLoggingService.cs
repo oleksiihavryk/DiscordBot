@@ -48,7 +48,9 @@ public class BotLoggingService : IBotLoggingService
     }
 
     protected virtual string GetFormatStringMessage(LogMessage message)
-        => $"{message.Message} ({message.Exception.Message})";
+        => message.Exception != null ? 
+            $"{message.Message} ({message.Exception.Message})" :
+            message.Message;
     protected virtual void LogCaughtException(string source, string message, Exception exception)
         => _logger.LogError(
             message: $"[{source}] {message}",
