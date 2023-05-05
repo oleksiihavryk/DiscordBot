@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using System.Text.RegularExpressions;
+using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Options;
 using Oleksii_Havryk.DiscordBot.Core.Extensions;
@@ -67,7 +68,12 @@ public class LanguageFilterService : ILanguageFilterService
     }
 
     protected virtual string[] ExtractWords(string content)
-        => content.Trim().ToLower().Split(' ');
+        => content.Trim()
+            .ToLower()
+            .Split(' ')
+            .Where(w => string.IsNullOrWhiteSpace(w) == false)
+            .Select(w => new string(w.Trim().Where(s => char.IsLetter(s)).ToArray()))
+            .ToArray();
     protected virtual string GetTextResponseOnInappropriateWord(ulong userId)
     {
         if (ExceptionalUsers.Identificators.Contains(userId.ToString()))

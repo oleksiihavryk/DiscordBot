@@ -19,6 +19,29 @@ public static class ConfigurationExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.ConfigureBotOptions(configuration);
+        
+        services.AddCoreServices();
+        
+        services.AddLanguageFilterServices();
+        services.AddLoggingServices();
+        
+        services.AddCommands();
+
+        return services.AddSingleton<Bot>();
+    }
+
+    private static void AddLoggingServices(this IServiceCollection services)
+    {
+        //Bot inner services helpers.
+        services.AddSingleton<ILoggerMessagesFolder, LoggerMessagesFolder>();
+        //Bot inner services.
+        services.AddSingleton<IBotLoggingService, BotLoggingService>();
+    }
+    private static void ConfigureBotOptions(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
         //Bot options.
         services.AddOptions<BotOptions>().Configure(bto =>
         {
@@ -40,7 +63,26 @@ public static class ConfigurationExtensions
                 .GetSection("Bot")
                 .GetValue<string>("RussianDictionaryApiKey") ?? string.Empty;
         });
-
+    }
+    private static void AddLanguageFilterServices(this IServiceCollection services)
+    {
+        //dictionary web services
+        services.AddSingleton<IUkrainianDictionaryWebService, UkrainianDictionaryWebService>();
+        services.AddSingleton<IRussianDictionaryWebService, RussianDictionaryWebService>();
+        //Bot inner services helpers.
+        services.AddSingleton<ILanguageFilter, UkrainianRussianLanguageFilter>();
+        //Bot inner services.
+        services.AddSingleton<ILanguageFilterService, LanguageFilterService>();
+    }
+    private static void AddCommands(this IServiceCollection services)
+    {
+        //Bot inner services.
+        services.AddSingleton<
+            ICommandHandlerService,
+            CommandHandlerService<BasicInteractionModule>>();
+    }
+    private static void AddCoreServices(this IServiceCollection services)
+    {
         //Bot standard inner controller elements.
         var client = new DiscordSocketClient(config: new DiscordSocketConfig()
         {
@@ -52,22 +94,5 @@ public static class ConfigurationExtensions
 
         services.AddSingleton<DiscordSocketClient>(client);
         services.AddSingleton<InteractionService>(interactionService);
-
-        //dictionary web services
-        services.AddSingleton<IUkrainianDictionaryWebService, UkrainianDictionaryWebService>();
-        services.AddSingleton<IRussianDictionaryWebService, RussianDictionaryWebService>();
-
-        //Bot inner services helpers.
-        services.AddSingleton<ILanguageFilter, UkrainianRussianLanguageFilter>();
-        services.AddSingleton<ILoggerMessagesFolder, LoggerMessagesFolder>();
-
-        //Bot inner services.
-        services.AddSingleton<ILanguageFilterService, LanguageFilterService>();
-        services.AddSingleton<IBotLoggingService, BotLoggingService>();
-        services.AddSingleton<
-            ICommandHandlerService,
-            CommandHandlerService<BasicInteractionModule>>();
-        
-        return services.AddSingleton<Bot>();
     }
 }
